@@ -17,11 +17,13 @@ public class Guard : MonoBehaviour
         LayerMask targetMask = LayerMask.GetMask("player");
         LayerMask obstructionMask = LayerMask.GetMask("obstruction");
         BlackBoard blackBoard = new BlackBoard();
+        blackBoard.SetValue("agent", agent);
+        blackBoard.SetValue("gameObject", gameObject);
 
         tree = new BTParallelSelector(
             new BTSequence(
                 new BTLook(gameObject, targetMask, obstructionMask, 10, 130, blackBoard),
-                new BTMove(agent, new Vector3(10, 0, 10))
+                new BTChase(blackBoard,1, 5)
             ),
             
             new BTSequence(

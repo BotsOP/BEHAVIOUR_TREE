@@ -10,14 +10,54 @@ public abstract class BTBaseNode
     public abstract TaskStatus Run();
     public abstract void OnEnter();
 }
+
+public class BTChase : BTBaseNode
+{
+    private BlackBoard blackBoard;
+    private NavMeshAgent agent;
+    private GameObject gameObject;
+    private Transform target;
+    private float inRange;
+    private float stoppingDistance;
+    public BTChase(BlackBoard _blackBoard, float _inRange, float _stoppingDistance)
+    {
+        blackBoard = _blackBoard;
+        agent = blackBoard.GetValue<NavMeshAgent>("agent");
+        gameObject = blackBoard.GetValue<GameObject>("gameObject");
+        target = blackBoard.GetValue<Transform>("target");
+        inRange = _inRange;
+        stoppingDistance = _stoppingDistance;
+    }
+    public override TaskStatus Run()
+    {
+        Vector3 lookAt = new Vector3(blackBoard.GetValue<Transform>("target").position.x, gameObject.transform.position.y, blackBoard.GetValue<Transform>("target").position.z);
+        gameObject.transform.LookAt(lookAt);
+        
+        agent.SetDestination(blackBoard.GetValue<Transform>("target").position);
+        
+        if (agent.remainingDistance < inRange && !agent.pathPending)
+        {
+            return TaskStatus.Success;
+        }
+        if (agent.remainingDistance > stoppingDistance && !agent.pathPending)
+        {
+            return TaskStatus.Failed;
+        }
+        return TaskStatus.Running;
+    }
+    public override void OnEnter()
+    {
+        
+    }
+}
 public class BTLook : BTBaseNode
 {
     private FieldOfView fov;
     private BlackBoard blackBoard;
-    public BTLook(GameObject _gameObject, LayerMask _targetMask, LayerMask _obstructionMask, float radius, float angle, BlackBoard _blackBoard)
+    public BTLook(GameObject _gameObject, LayerMask _targetMask, LayerMask _obstructionMask, float _radius, float _angle, BlackBoard _blackBoard)
     {
         blackBoard = _blackBoard;
-        fov = new FieldOfView(_gameObject, _targetMask, _obstructionMask, radius, angle);
+        fov = new FieldOfView(_gameObject, _targetMask, _obstructionMask, _radius, _angle);
     }
     
     public override TaskStatus Run()
