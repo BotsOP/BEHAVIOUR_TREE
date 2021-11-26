@@ -40,7 +40,7 @@ public class HittableArmor : MonoBehaviour, IDamagable
     {
         if (!ms.enabled)
         {
-            rb.AddTorque(randomRot * 100);
+            rb.AddTorque(randomRot * 9999);
         }
     }
 
