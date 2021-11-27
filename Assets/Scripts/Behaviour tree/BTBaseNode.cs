@@ -11,6 +11,39 @@ public abstract class BTBaseNode
     public abstract void OnEnter();
 }
 
+public class BTAnimate : BTBaseNode
+{
+    private Animator anim;
+    private Vector2 moveDir;
+    
+    public BTAnimate(Vector2 _moveDir, Animator _anim)
+    {
+        moveDir = _moveDir;
+        anim = _anim;
+    }
+    public override TaskStatus Run()
+    {
+        Vector2 currentDir = new Vector2(anim.GetFloat("moveX"), anim.GetFloat("moveY"));
+        currentDir = Vector2.Lerp(currentDir, moveDir, Time.deltaTime);
+        anim.SetFloat("moveX", currentDir.x);
+        anim.SetFloat("moveY", currentDir.y);
+
+        if (Vector2.Distance(currentDir, moveDir) < 0.1f)
+        {
+            currentDir = moveDir;
+            anim.SetFloat("moveX", currentDir.x);
+            anim.SetFloat("moveY", currentDir.y);
+            return TaskStatus.Success;
+        }
+
+        return TaskStatus.Running;
+    }
+    public override void OnEnter()
+    {
+        
+    }
+}
+
 public class BTChase : BTBaseNode
 {
     private BlackBoard blackBoard;
@@ -24,16 +57,17 @@ public class BTChase : BTBaseNode
         blackBoard = _blackBoard;
         agent = blackBoard.GetValue<NavMeshAgent>("agent");
         gameObject = blackBoard.GetValue<GameObject>("gameObject");
-        target = blackBoard.GetValue<Transform>("target");
+        
         inRange = _inRange;
         stoppingDistance = _stoppingDistance;
     }
     public override TaskStatus Run()
     {
-        Vector3 lookAt = new Vector3(blackBoard.GetValue<Transform>("target").position.x, gameObject.transform.position.y, blackBoard.GetValue<Transform>("target").position.z);
+        Vector3 targetPos = target.position;
+        Vector3 lookAt = new Vector3(targetPos.x, gameObject.transform.position.y, targetPos.z);
         gameObject.transform.LookAt(lookAt);
         
-        agent.SetDestination(blackBoard.GetValue<Transform>("target").position);
+        agent.SetDestination(targetPos);
         
         if (agent.remainingDistance < inRange && !agent.pathPending)
         {
@@ -47,7 +81,7 @@ public class BTChase : BTBaseNode
     }
     public override void OnEnter()
     {
-        
+        target = blackBoard.GetValue<Transform>("target");
     }
 }
 public class BTLook : BTBaseNode
@@ -114,14 +148,14 @@ public class BTMove : BTBaseNode
     {
         if (agent.remainingDistance < 0.1f && !agent.pathPending)
         {
-            Debug.Log("reached pos");
+            //Debug.Log(targetPos);
             return TaskStatus.Success;
         }
         return TaskStatus.Running;
     }
     public override void OnEnter()
     {
-        //Debug.Log(targetPos);
+        Debug.Log(targetPos);
         agent.SetDestination(targetPos);
     }
 }

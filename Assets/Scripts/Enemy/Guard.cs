@@ -18,10 +18,12 @@ public class Guard : MonoBehaviour
     
     private BTBaseNode tree;
     private NavMeshAgent agent;
+    private Animator anim;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        anim = GetComponent<Animator>();
     }
     void Start()
     {
@@ -33,20 +35,6 @@ public class Guard : MonoBehaviour
         blackBoard.SetValue("noticeThreshhold", noticeTargetThreshold);
         blackBoard.SetValue("currentNotice", 0f);
 
-        // tree = new BTParallelSelector(
-        //     new BTSequence(
-        //         new BTLook(gameObject, targetMask, obstructionMask, radius, angle, blackBoard, 60),
-        //         new BTChase(blackBoard,1, 5)
-        //     ),
-        //     
-        //     new BTSequence(
-        //         new BTMove(agent, RandomPos()),
-        //         new BTWait(3f),
-        //         new BTMove(agent, RandomPos()),
-        //         new BTWait(3f)
-        //     )
-        //
-        // );
         BTBaseNode enemyLookNode = new BTSelector(
             new BTLookNoticeThreshhold(
                 new BTLook(gameObject, targetMask, obstructionMask, radius1, angle1, blackBoard),
@@ -61,19 +49,36 @@ public class Guard : MonoBehaviour
                 blackBoard, 10
             )
         );
-        
+
+        agent.SetDestination(new Vector3(10, 0, 10));
         //THIS IS THE MAIN TREE!!!!!!!
         tree = new BTParallelSelector(
             new BTSequence(
                 enemyLookNode,
-                new BTChase(blackBoard,1, 5)
+                new BTChase(blackBoard, 1, 5)
             ),
             
+            //replace with moveTo -> animate -> checkDis -> animate -> wait
             new BTSequence(
-                new BTMove(agent, RandomPos()),
-                new BTWait(3f),
-                new BTMove(agent, RandomPos()),
-                new BTWait(3f)
+                new BTParallelComplete(
+                    new BTAnimate(Vector2.up, anim),
+                    new BTMove(agent, RandomPos())
+                    ),
+                
+                new BTParallelComplete(
+                    new BTAnimate(Vector2.zero, anim),
+                    new BTWait(3f)
+                ),
+                new BTParallelComplete(
+                    new BTAnimate(Vector2.up, anim),
+                    new BTMove(agent, RandomPos())
+                ),
+                
+                new BTParallelComplete(
+                    new BTAnimate(Vector2.zero, anim),
+                    new BTWait(3f)
+                )
+
             )
 
         );
