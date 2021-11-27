@@ -60,27 +60,18 @@ public class Guard : MonoBehaviour
             
             //replace with moveTo -> animate -> checkDis -> animate -> wait
             new BTSequence(
-                new BTParallelComplete(
-                    new BTAnimate(Vector2.up, anim),
-                    new BTMove(agent, RandomPos())
-                    ),
+                new BTMove(agent, RandomPos()),
+                new BTAnimate(Vector2.up, anim, 3f),
+                new BTCheckDistanceAgent(agent, 1),
+                new BTAnimate(Vector2.zero, anim, 1.5f),
+                new BTWait(30f),
                 
-                new BTParallelComplete(
-                    new BTAnimate(Vector2.zero, anim),
-                    new BTWait(3f)
-                ),
-                new BTParallelComplete(
-                    new BTAnimate(Vector2.up, anim),
-                    new BTMove(agent, RandomPos())
-                ),
-                
-                new BTParallelComplete(
-                    new BTAnimate(Vector2.zero, anim),
-                    new BTWait(3f)
-                )
-
+                new BTMove(agent, RandomPos()),
+                new BTAnimate(Vector2.up, anim, 3f),
+                new BTCheckDistanceAgent(agent, 1),
+                new BTAnimate(Vector2.zero, anim, 1.5f),
+                new BTWait(3f)
             )
-
         );
     }
     
