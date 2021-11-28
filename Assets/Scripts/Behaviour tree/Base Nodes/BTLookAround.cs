@@ -10,6 +10,8 @@ public class BTLookAround : BTBaseNode
     private float timeForLooking = 2f;
     private bool hasTurnedhead;
     private bool turnedHead;
+    private bool waitingHead;
+    private float startTimeHead;
     public BTLookAround(Animator _anim)
     {
         anim = _anim;
@@ -41,14 +43,25 @@ public class BTLookAround : BTBaseNode
             //Debug.Log(Time.time + "   " + startTime + "  " + hasTurnedhead);
             if (Time.time - startTime > timeForLooking && hasTurnedhead)
             {
-                float currentX = lookX - lookSpeed;
-                anim.SetFloat("lookX", currentX);
+                if (!waitingHead)
+                {
+                    float currentX = lookX - lookSpeed;
+                    anim.SetFloat("lookX", currentX);
+                }
                 
                 if (lookX < 0)
                 {
                     //import look center and have that as starting anim in blend tree
                     //anim.SetLayerWeight(1, 0);
-                    return TaskStatus.Success;
+                    if (!waitingHead)
+                    {
+                        startTimeHead = Time.time;
+                        waitingHead = true;
+                    }
+                    if (Time.time - startTimeHead > timeForLooking && waitingHead)
+                    {
+                        return TaskStatus.Success;
+                    }
                 }
             }
         }

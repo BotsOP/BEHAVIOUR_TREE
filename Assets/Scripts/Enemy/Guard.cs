@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class Guard : MonoBehaviour
 {
+    [Header("Vision Cone")]
     public float radius1 = 10;
     public float angle1 = 100;
     
@@ -15,6 +16,9 @@ public class Guard : MonoBehaviour
     public float angle3 = 30;
     
     public float noticeTargetThreshold = 250;
+
+    [Header("Patrol")] 
+    public Transform[] patrolPoints;
     
     private BTBaseNode tree;
     private NavMeshAgent agent;
@@ -60,16 +64,21 @@ public class Guard : MonoBehaviour
 
             //replace with moveTo -> animate -> checkDis -> animate -> wait
             new BTSequence(
-                new BTMove(agent, RandomPos()),
+                new BTMove(agent, patrolPoints[0]),
                 new BTAnimate(new[] {1f}, new[] {"moveY"}, anim, 0.5f),
                 new BTCheckDistanceAgent(agent, 0.3f),
                 new BTAnimate(new[] {0f}, new[] {"moveY"}, anim, 0.5f),
+                new BTCheckDistanceAgent(agent, 0.001f),
+                
+                new BTTurn(transform, patrolPoints[0], 0.5f),
                 new BTLookAround(anim),
                 
-                new BTMove(agent, RandomPos()),
+                new BTMove(agent, patrolPoints[1]),
                 new BTAnimate(new[] {1f}, new[] {"moveY"}, anim, 0.5f),
                 new BTCheckDistanceAgent(agent, 0.3f),
                 new BTAnimate(new[] {0f}, new[] {"moveY"}, anim, 0.5f),
+                new BTCheckDistanceAgent(agent, 0.01f),
+                new BTTurn(transform, patrolPoints[1], 0.5f),
                 new BTLookAround(anim)
             )
         );

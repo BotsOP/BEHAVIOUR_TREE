@@ -47,7 +47,6 @@ public class BTAnimate : BTBaseNode
             
             if (Math.Abs(anim.GetFloat(animations[i]) - newValues[i]) < 0.01)
             {
-                //Debug.Log("");
                 return TaskStatus.Success;
             }
             

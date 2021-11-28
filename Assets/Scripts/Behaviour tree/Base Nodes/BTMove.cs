@@ -5,16 +5,16 @@ using UnityEngine.AI;
 
 public class BTMove : BTBaseNode
 {
-    private Vector3 targetPos;
+    private Transform targetTransform;
     private NavMeshAgent agent;
-    public BTMove(NavMeshAgent _agent, Vector3 _targetPos)
+    public BTMove(NavMeshAgent _agent, Transform _targetTransform)
     {
-        targetPos = _targetPos;
         agent = _agent;
+        targetTransform = _targetTransform;
     }
     public override TaskStatus Run()
     {
-        agent.SetDestination(targetPos);
+        agent.SetDestination(targetTransform.position);
         return TaskStatus.Success;
     }
     public override void OnEnter()
