@@ -57,20 +57,20 @@ public class Guard : MonoBehaviour
                 enemyLookNode,
                 new BTChase(blackBoard, 1, 5)
             ),
-            
+
             //replace with moveTo -> animate -> checkDis -> animate -> wait
             new BTSequence(
                 new BTMove(agent, RandomPos()),
-                new BTAnimate(Vector2.up, anim, 3f),
-                new BTCheckDistanceAgent(agent, 1),
-                new BTAnimate(Vector2.zero, anim, 1.5f),
-                new BTWait(30f),
+                new BTAnimate(new[] {1f}, new[] {"moveY"}, anim, 0.5f),
+                new BTCheckDistanceAgent(agent, 0.3f),
+                new BTAnimate(new[] {0f}, new[] {"moveY"}, anim, 0.5f),
+                new BTLookAround(anim),
                 
                 new BTMove(agent, RandomPos()),
-                new BTAnimate(Vector2.up, anim, 3f),
-                new BTCheckDistanceAgent(agent, 1),
-                new BTAnimate(Vector2.zero, anim, 1.5f),
-                new BTWait(3f)
+                new BTAnimate(new[] {1f}, new[] {"moveY"}, anim, 0.5f),
+                new BTCheckDistanceAgent(agent, 0.3f),
+                new BTAnimate(new[] {0f}, new[] {"moveY"}, anim, 0.5f),
+                new BTLookAround(anim)
             )
         );
     }

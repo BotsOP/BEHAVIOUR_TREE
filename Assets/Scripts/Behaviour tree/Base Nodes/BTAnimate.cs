@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,33 +6,51 @@ using UnityEngine;
 public class BTAnimate : BTBaseNode
 {
     private Animator anim;
-    private Vector2 moveDir;
-    private float speedLerp = 1;
+    private float[] newValues;
+    private string[] animations;
+    private float animationTime;
+    private float[] currentValues;
     
-    public BTAnimate(Vector2 _moveDir, Animator _anim, float _speedLerp)
+    public BTAnimate(float[] _newValues, string[] _animations, Animator _anim, float _animationTime)
     {
-        moveDir = _moveDir;
-        anim = _anim;
-        speedLerp = _speedLerp;
-    }
-    public BTAnimate(Vector2 _moveDir, Animator _anim)
-    {
-        moveDir = _moveDir;
+        newValues = _newValues;
+        animations = _animations;
+        animationTime = _animationTime;
+        currentValues = new float[newValues.Length];
+        
+        if(animations.Length != newValues.Length)
+            Debug.LogError("you dont have matching amount of arguments in your BTAnimate");
+
         anim = _anim;
     }
     public override TaskStatus Run()
     {
-        Vector2 currentDir = new Vector2(anim.GetFloat("moveX"), anim.GetFloat("moveY"));
-        currentDir = Vector2.Lerp(currentDir, moveDir, Time.deltaTime * speedLerp);
-        anim.SetFloat("moveX", currentDir.x);
-        anim.SetFloat("moveY", currentDir.y);
+        // Vector2 currentDir = new Vector2(anim.GetFloat("moveX"), anim.GetFloat("moveY"));
+        // currentDir = Vector2.Lerp(currentDir, moveDir, Time.deltaTime * speedLerp);
+        // anim.SetFloat("moveX", currentDir.x);
+        // anim.SetFloat("moveY", currentDir.y);
+        //
+        // if (Vector2.Distance(currentDir, moveDir) < 0.01f)
+        // {
+        //     currentDir = moveDir;
+        //     anim.SetFloat("moveX", currentDir.x);
+        //     anim.SetFloat("moveY", currentDir.y);
+        //     return TaskStatus.Success;
+        // }
 
-        if (Vector2.Distance(currentDir, moveDir) < 0.01f)
+        for (int i = 0; i < newValues.Length; i++)
         {
-            currentDir = moveDir;
-            anim.SetFloat("moveX", currentDir.x);
-            anim.SetFloat("moveY", currentDir.y);
-            return TaskStatus.Success;
+            if(currentValues[i] == 0)
+                currentValues[i] = (newValues[i] - anim.GetFloat(animations[i])) / (50 * animationTime);
+            
+            anim.SetFloat(animations[i], anim.GetFloat(animations[i]) + currentValues[i]);
+            
+            if (Math.Abs(anim.GetFloat(animations[i]) - newValues[i]) < 0.01)
+            {
+                //Debug.Log("");
+                return TaskStatus.Success;
+            }
+            
         }
 
         return TaskStatus.Running;
