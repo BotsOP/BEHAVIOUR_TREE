@@ -25,19 +25,6 @@ public class BTAnimate : BTBaseNode
     }
     public override TaskStatus Run()
     {
-        // Vector2 currentDir = new Vector2(anim.GetFloat("moveX"), anim.GetFloat("moveY"));
-        // currentDir = Vector2.Lerp(currentDir, moveDir, Time.deltaTime * speedLerp);
-        // anim.SetFloat("moveX", currentDir.x);
-        // anim.SetFloat("moveY", currentDir.y);
-        //
-        // if (Vector2.Distance(currentDir, moveDir) < 0.01f)
-        // {
-        //     currentDir = moveDir;
-        //     anim.SetFloat("moveX", currentDir.x);
-        //     anim.SetFloat("moveY", currentDir.y);
-        //     return TaskStatus.Success;
-        // }
-
         for (int i = 0; i < newValues.Length; i++)
         {
             if(currentValues[i] == 0)

@@ -73,6 +73,8 @@ public class BTLookAround : BTBaseNode
         anim.SetLayerWeight(1, 1);
         turnedHead = false;
         hasTurnedhead = false;
+        waitingHead = false;
+        startTimeHead = 0;
         startTime = 0;
     }
 }

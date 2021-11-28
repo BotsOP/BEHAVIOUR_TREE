@@ -20,7 +20,6 @@ public class BTTurn : BTBaseNode
         currentLerp = currentLerp + lerpValue;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetTransform.rotation, currentLerp);
 
-            Debug.Log(currentLerp);
         if (currentLerp >= 1)
         {
             return TaskStatus.Success;
