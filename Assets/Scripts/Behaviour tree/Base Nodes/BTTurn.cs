@@ -33,4 +33,8 @@ public class BTTurn : BTBaseNode
         currentLerp = 0;
         lerpValue = 0.02f / turnTime;
     }
+    public override void OnExit()
+    {
+        
+    }
 }

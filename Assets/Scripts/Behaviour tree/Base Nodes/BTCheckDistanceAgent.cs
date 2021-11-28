@@ -24,4 +24,8 @@ public class BTCheckDistanceAgent : BTBaseNode
     {
         
     }
+    public override void OnExit()
+    {
+        
+    }
 }

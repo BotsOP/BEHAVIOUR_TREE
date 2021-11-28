@@ -17,13 +17,17 @@ public class BTLook : BTBaseNode
         fov.Update();
         if (fov.canSeeTarget)
         {
-            Debug.Log("seeing target!!!!!!!!!!!!!!");
+            Debug.Log("CANSEETARGET");
             blackBoard.SetValue("target", fov.target);
             return TaskStatus.Success;
         }
         return TaskStatus.Failed;
     }
     public override void OnEnter()
+    {
+        
+    }
+    public override void OnExit()
     {
         
     }

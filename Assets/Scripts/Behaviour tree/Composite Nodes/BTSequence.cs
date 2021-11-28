@@ -42,4 +42,12 @@ public class BTSequence : BTBaseNode
     {
         nodes[currentIndex].OnEnter();
     }
+    public override void OnExit()
+    {
+        currentIndex = 0;
+        foreach (var node in nodes)
+        {
+            node.OnExit();
+        }
+    }
 }

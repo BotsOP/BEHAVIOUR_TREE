@@ -42,4 +42,8 @@ public class BTSelector : BTBaseNode
     {
         nodes[currentIndex].OnEnter();
     }
+    public override void OnExit()
+    {
+        
+    }
 }

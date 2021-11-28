@@ -9,4 +9,5 @@ public abstract class BTBaseNode
 {
     public abstract TaskStatus Run();
     public abstract void OnEnter();
+    public abstract void OnExit();
 }

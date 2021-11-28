@@ -761,7 +761,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -1390,7 +1390,7 @@ GameObject:
   - component: {fileID: 1981511031}
   - component: {fileID: 1981511030}
   - component: {fileID: 1981511035}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1410,7 +1410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canMove: 1
-  walkSpeed: 3
+  walkSpeed: 6
   gravity: 30
   lookSpeedX: 2
   lookSpeedY: 2
@@ -1490,14 +1490,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1981511029}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalRotation: {x: -0, y: -0.9960365, z: -0, w: 0.08894516}
+  m_LocalPosition: {x: -1.74, y: 1, z: 4.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 963194228}
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -169.794, z: 0}
 --- !u!114 &1981511035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9673,7 +9673,7 @@ MonoBehaviour:
   angle2: 60
   radius3: 10
   angle3: 30
-  noticeTargetThreshold: 1500
+  noticeTargetThreshold: 400
   patrolPoints:
   - {fileID: 2114653202}
   - {fileID: 1711942205}

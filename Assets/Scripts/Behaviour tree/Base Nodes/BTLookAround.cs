@@ -77,4 +77,8 @@ public class BTLookAround : BTBaseNode
         startTimeHead = 0;
         startTime = 0;
     }
+    public override void OnExit()
+    {
+        anim.SetFloat("lookX", 0);
+    }
 }

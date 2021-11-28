@@ -42,4 +42,8 @@ public class BTChase : BTBaseNode
     {
         target = blackBoard.GetValue<Transform>("target");
     }
+    public override void OnExit()
+    {
+        
+    }
 }

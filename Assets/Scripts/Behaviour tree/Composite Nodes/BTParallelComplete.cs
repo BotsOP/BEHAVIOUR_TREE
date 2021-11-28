@@ -40,7 +40,6 @@ public class BTParallelComplete : BTBaseNode
 
         if (successCount >= nodes.Length)
         {
-            Debug.Log(successCount + "   " + nodes.Length);
             currentIndex = 0;
             onEnter = true;
             return TaskStatus.Success;
@@ -50,6 +49,10 @@ public class BTParallelComplete : BTBaseNode
         return TaskStatus.Running;
     }
     public override void OnEnter()
+    {
+        
+    }
+    public override void OnExit()
     {
         
     }
