@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Behaviour_tree.Base_Nodes;
+using Behaviour_tree.Decorator_Nodes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,6 +21,7 @@ public class Guard : MonoBehaviour
 
     [Header("Patrol")] 
     public Transform[] patrolPoints;
+    public GameObject head;
     
     private BTBaseNode tree;
     private NavMeshAgent agent;
@@ -42,125 +44,58 @@ public class Guard : MonoBehaviour
 
         BTBaseNode enemyLookNode = new BTSelector(
             new BTLookNoticeThreshhold(
-                new BTLook(gameObject, targetMask, obstructionMask, radius1, angle1, blackBoard),
+                new BTLook(head, targetMask, obstructionMask, radius3, angle3, blackBoard),
                 blackBoard, 10
             ),
             new BTLookNoticeThreshhold(
-                new BTLook(gameObject, targetMask, obstructionMask, radius2, angle2, blackBoard),
+                new BTLook(head, targetMask, obstructionMask, radius2, angle2, blackBoard),
                 blackBoard, 10
             ),
             new BTLookNoticeThreshhold(
-                new BTLook(gameObject, targetMask, obstructionMask, radius3, angle3, blackBoard),
+                new BTLook(head, targetMask, obstructionMask, radius1, angle1, blackBoard),
                 blackBoard, 10
             )
         );
+
+        BTBaseNode[] patrolNodes = new BTBaseNode[patrolPoints.Length];
+        for (int i = 0; i < patrolPoints.Length; i++)
+        {
+            patrolNodes[i] = new BTSequence(
+                    new BTMove(agent, patrolPoints[i]),
+                    new BTParallelComplete(
+                        new BTAnimate(anim, 0.5f, new AnimatePackage(1f, "moveY")),
+                        new BTChangeSpeed(agent, 1.5F, 0.5f)
+                    ),
+                    new BTCheckDistanceAgent(agent, 0.3f),
+                    new BTAnimate(anim, 0.5f, new AnimatePackage(0f, "moveY")),
+                    new BTCheckDistanceAgent(agent, 0.001f),
+                    new BTTurn(transform, patrolPoints[i], 0.5f),
+                    new BTLookAround(anim)
+                );
+        }
         
         //THIS IS THE MAIN TREE!!!!!!!
         tree = new BTSequence(
             new BTParallelSelector(
                 enemyLookNode,
-
-                //replace with moveTo -> animate -> checkDis -> animate -> wait
                 new BTSequence(
-                    new BTMove(agent, patrolPoints[0]),
-                    new BTParallelComplete(
-                        new BTAnimate(new[]
-                        {
-                            1f
-                        }, new[]
-                        {
-                            "moveY"
-                        }, anim, 0.5f),
-                        new BTChangeSpeed(agent, 1.5F, 0.5f)
-                    ),
-                    new BTCheckDistanceAgent(agent, 0.3f),
-                    new BTAnimate(new[]
-                    {
-                        0f
-                    }, new[]
-                    {
-                        "moveY"
-                    }, anim, 0.5f),
-                    new BTCheckDistanceAgent(agent, 0.001f),
-                    new BTTurn(transform, patrolPoints[0], 0.5f),
-                    new BTLookAround(anim),
-
-                    new BTMove(agent, patrolPoints[1]),
-                    new BTAnimate(new[]
-                    {
-                        1f
-                    }, new[]
-                    {
-                        "moveY"
-                    }, anim, 0.5f),
-                    new BTCheckDistanceAgent(agent, 0.3f),
-                    new BTAnimate(new[]
-                    {
-                        0f
-                    }, new[]
-                    {
-                        "moveY"
-                    }, anim, 0.5f),
-                    new BTCheckDistanceAgent(agent, 0.01f),
-                    new BTTurn(transform, patrolPoints[1], 0.5f),
-                    new BTLookAround(anim),
-
-                    new BTMove(agent, patrolPoints[2]),
-                    new BTAnimate(new[]
-                    {
-                        1f
-                    }, new[]
-                    {
-                        "moveY"
-                    }, anim, 0.5f),
-                    new BTCheckDistanceAgent(agent, 0.3f),
-                    new BTAnimate(new[]
-                    {
-                        0f
-                    }, new[]
-                    {
-                        "moveY"
-                    }, anim, 0.5f),
-                    new BTCheckDistanceAgent(agent, 0.001f),
-                    new BTTurn(transform, patrolPoints[2], 0.5f),
-                    new BTLookAround(anim),
-
-                    new BTMove(agent, patrolPoints[3]),
-                    new BTAnimate(new[]
-                    {
-                        1f
-                    }, new[]
-                    {
-                        "moveY"
-                    }, anim, 0.5f),
-                    new BTCheckDistanceAgent(agent, 0.3f),
-                    new BTAnimate(new[]
-                    {
-                        0f
-                    }, new[]
-                    {
-                        "moveY"
-                    }, anim, 0.5f),
-                    new BTCheckDistanceAgent(agent, 0.001f),
-                    new BTTurn(transform, patrolPoints[3], 0.5f),
-                    new BTLookAround(anim)
-                )
-            ),
+                    patrolNodes
+            )),
             
             new BTSequence(
-                enemyLookNode,
+                new BTChaseSimple(agent, blackBoard),
                 new BTParallelComplete(
-                    new BTAnimate(new[]
-                    {
-                        2f
-                    }, new[]
-                    {
-                        "moveY"
-                    }, anim, 0.5f),
-                    new BTChangeSpeed(agent, 6, 0.5f),
-                    new BTChaseSimple(agent, blackBoard)
+                    new BTAnimate(anim, 0.5f, new AnimatePackage(2f, "moveY")),
+                    new BTChangeSpeed(agent, 6, 0.5f)
                 ),
-                new BTChase(blackBoard, 1, 5)
+                new BTChaseSimple(agent, blackBoard),
+                //if enemy is in range attack
+                new BTSequence(
+                    new BTRunningToFailed(new BTCheckDistanceAgent(agent, 3)),
+                    new BTAnimate(anim, 0.1f, new AnimatePackage(1, "isAttacking")),
+                    new BTAnimate(anim, 0.1f, new AnimatePackage(0, "isAttacking"))
+                    ),
+                new BTInvert(new BTRunningToFailed(new BTCheckDistanceAgent(agent, 3)))
             )
         );
     }
@@ -172,6 +107,7 @@ public class Guard : MonoBehaviour
 
     void FixedUpdate()
     {
+        
         tree?.Run();
     }
 }

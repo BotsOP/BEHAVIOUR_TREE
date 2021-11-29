@@ -36,6 +36,8 @@ public class BTChase : BTBaseNode
         {
             return TaskStatus.Failed;
         }
+        //Debug.Log((blackBoard.GetValue<GameObject>("gameObject").transform.position - targetPos).normalized);
+        Debug.Log(agent.velocity);
         return TaskStatus.Running;
     }
     public override void OnEnter()

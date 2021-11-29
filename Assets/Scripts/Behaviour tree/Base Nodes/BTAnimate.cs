@@ -6,21 +6,15 @@ using UnityEngine;
 public class BTAnimate : BTBaseNode
 {
     private Animator anim;
-    private float[] newValues;
-    private string[] animations;
+    private AnimatePackage animatePackage;
     private float animationTime;
-    private float[] currentValues;
+    private float currentValue;
     private bool equalAnimations;
     
-    public BTAnimate(float[] _newValues, string[] _animations, Animator _anim, float _animationTime)
+    public BTAnimate(Animator _anim, float _animationTime, AnimatePackage _animatePackage)
     {
-        newValues = _newValues;
-        animations = _animations;
         animationTime = _animationTime;
-        currentValues = new float[newValues.Length];
-        
-        if(animations.Length != newValues.Length)
-            Debug.LogError("you dont have matching amount of arguments in your BTAnimate");
+        animatePackage = _animatePackage;
 
         anim = _anim;
     }
@@ -30,55 +24,47 @@ public class BTAnimate : BTBaseNode
             return TaskStatus.Success;
         
         int animationsSuccess = 0;
-        for (int i = 0; i < newValues.Length; i++)
+        
+        if (currentValue == 0)
         {
-            if (currentValues[i] == 0)
-            {
-                currentValues[i] = (newValues[i] - anim.GetFloat(animations[i])) / (50 * animationTime);
-            }
-            
-            anim.SetFloat(animations[i], anim.GetFloat(animations[i]) + currentValues[i]);
-            
-            if (Math.Abs(anim.GetFloat(animations[i]) - newValues[i]) < 0.01)
-            {
-                animationsSuccess++;
-                anim.SetFloat(animations[i], newValues[i]);
-            }
-            
+            currentValue = (animatePackage.animationValue - anim.GetFloat(animatePackage.animationName)) / (50 * animationTime);
         }
-
-        if (newValues.Length == animationsSuccess)
+        //Debug.Log(currentValue + "      " + animatePackage.animationValue + "   " + anim.GetFloat(animatePackage.animationName));
+        
+        anim.SetFloat(animatePackage.animationName, anim.GetFloat(animatePackage.animationName) + currentValue);
+        
+        if (Math.Abs(anim.GetFloat(animatePackage.animationName) - animatePackage.animationValue) < 0.1)
         {
-            currentValues[0] = 0;
+            anim.SetFloat(animatePackage.animationName, animatePackage.animationValue);
             return TaskStatus.Success;
         }
-        
+
         return TaskStatus.Running;
     }
     public override void OnEnter()
     {
-        
         equalAnimations = false;
-        int animationsSuccess = 0;
-        for (int i = 0; i < currentValues.Length; i++)
-        {
-            currentValues[i] = 0;
-            if (Math.Abs(newValues[i] - anim.GetFloat(animations[i])) < 0.01f)
-            {
-                animationsSuccess++;
-            }
-        }
+        bool animationsSuccess = false;
+        currentValue = 0;
         
-        if (newValues.Length == animationsSuccess)
+        if (Math.Abs(animatePackage.animationValue - anim.GetFloat(animatePackage.animationName)) < 0.1f)
         {
             equalAnimations = true;
         }
     }
     public override void OnExit()
     {
-        for (int i = 0; i < newValues.Length; i++)
-        {
-            currentValues[i] = 0;
-        }
+        currentValue = 0;
+    }
+}
+
+public struct AnimatePackage {
+    public float animationValue;
+    public string animationName;
+    
+    public AnimatePackage(float _animationValue, string _animationName)
+    {
+        animationValue = _animationValue;
+        animationName = _animationName;
     }
 }

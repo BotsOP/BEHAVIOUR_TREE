@@ -17,7 +17,7 @@ public class BTLook : BTBaseNode
         fov.Update();
         if (fov.canSeeTarget)
         {
-            Debug.Log("CANSEETARGET");
+            //Debug.Log("CANSEETARGET");
             blackBoard.SetValue("target", fov.target);
             return TaskStatus.Success;
         }
