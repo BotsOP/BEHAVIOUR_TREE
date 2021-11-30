@@ -79,47 +79,54 @@ public class Guard : MonoBehaviour
                     new BTLookAround(anim)
                 );
         }
-        
-        //THIS IS THE MAIN TREE!!!!!!!
-        tree = new BTSequence(
-            new BTParallelSelector(
-                enemyLookNode,
-                new BTSequence(
-                    patrolNodes
-                )),
 
-            new BTSequence(
-                //if see weapon pick it up
-                new BTInvert(new BTSequence(
-                    new BTInvert(new BTFailIfBool(blackBoard, "hasWeapon")),
-                    new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
-                    new BTMoveTo(agent, blackBoard, "weapon"),
-                    new BTCheckDistanceAgent(agent, 1f),
-                    new BTAnimate(anim, 0.1f, new AnimatePackage(1, "weaponPickUp")),
-                    new BTWait(1.2f),
-                    new BTPickWeaponUp(blackBoard, crowbarInHand),
-                    new BTAnimate(anim, 0.1f, new AnimatePackage(0, "weaponPickUp")),
-                    new BTWait(5.5f)
-                    )),
-                
-                //new BTDebug("going to target"),
-                new BTMoveTo(agent, blackBoard, "target"),
-                new BTParallelComplete(
-                    new BTAnimate(anim, 0.5f, new AnimatePackage(2f, "moveY")),
-                    new BTChangeSpeed(agent, 6, 0.5f)
+        tree = new BTSwitchNode(
+            new BTSelector(
+                new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
+                enemyLookNode
                 ),
-                new BTMoveTo(agent, blackBoard, "target"),
-                
-                //if enemy is in range attack
-                new BTSequence(
-                    new BTRunningToFailed(new BTCheckDistanceAgent(agent, 3)),
-                    new BTAnimate(anim, 0.1f, new AnimatePackage(1, "isAttacking")),
-                    new BTAnimate(anim, 0.1f, new AnimatePackage(0, "isAttacking"))
-                    ),
+             new BTSequence(
+                 patrolNodes),
+             
+             new BTSequence(
+                 //if see weapon pick it up
+                 new BTInvert(new BTSequence(
+                     new BTInvert(new BTFailIfBool(blackBoard, "hasWeapon")),
+                     new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
+                     new BTParallelComplete(
+                         new BTAnimate(anim, 0.5f, new AnimatePackage(1f, "moveY")),
+                         new BTChangeSpeed(agent, 1.5F, 0.5f)
+                     ),
+                     new BTMoveTo(agent, blackBoard, "weapon"),
+                     new BTCheckDistanceAgent(agent, 0.5f),
+                     new BTMove(agent, transform),
+                     new BTAnimate(anim, 0.1f, new AnimatePackage(1, "weaponPickUp")),
+                     new BTWait(1.2f),
+                     new BTPickWeaponUp(blackBoard, crowbarInHand),
+                     new BTAnimate(anim, 0.1f, new AnimatePackage(0, "weaponPickUp")),
+                     new BTWait(5f),
+                     new BTChangeObjectLayer(crowbarInHand.gameObject, 0)
+                 )),
+                 
+                 enemyLookNode,
+                 new BTDebug("see player"),
+                 new BTMoveTo(agent, blackBoard, "target"),
+                 new BTParallelComplete(
+                     new BTAnimate(anim, 0.5f, new AnimatePackage(2f, "moveY")),
+                     new BTChangeSpeed(agent, 6, 0.5f)
+                 ),
+                 new BTMoveTo(agent, blackBoard, "target"),
 
-                new BTInvert(new BTRunningToFailed(new BTCheckDistanceAgent(agent, 30)))
-            )
-        );
+                 //if enemy is in range attack
+                 new BTSequence(
+                     new BTRunningToFailed(new BTCheckDistanceAgent(agent, 3)),
+                     new BTAnimate(anim, 0.1f, new AnimatePackage(1, "isAttacking")),
+                     new BTAnimate(anim, 0.1f, new AnimatePackage(0, "isAttacking"))
+                 ),
+
+                 new BTInvert(new BTRunningToFailed(new BTCheckDistanceAgent(agent, 30)))
+             )
+         );
     }
     
     private Vector3 RandomPos()

@@ -23,7 +23,6 @@ namespace Behaviour_tree.Base_Nodes
         }
         public override void OnEnter()
         {
-            Debug.Log("onenter");
             crowbar = blackBoard.GetValue<Transform>("weapon");
             blackBoard.SetValue("hasWeapon", true);
         }

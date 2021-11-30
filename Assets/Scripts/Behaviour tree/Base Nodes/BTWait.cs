@@ -15,7 +15,6 @@ public class BTWait : BTBaseNode
         //Debug.Log(Time.time + "   " + starTime + "   " + waitTime);
         if (Time.time - starTime > waitTime)
         {
-            Debug.Log("done waiting");
             return TaskStatus.Success;
         }
         return TaskStatus.Running;
