@@ -31,7 +31,8 @@ public class BTSelector : BTBaseNode
                     currentIndex = 0;
                     startNode = true;
                     return TaskStatus.Success;
-                case TaskStatus.Running: return TaskStatus.Running;
+                case TaskStatus.Running: 
+                    return TaskStatus.Running;
             }
         }
         currentIndex = 0;

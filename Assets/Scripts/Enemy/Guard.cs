@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Behaviour_tree.Base_Nodes;
 using Behaviour_tree.Decorator_Nodes;
+using Behaviour_tree.Switch_Nodes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -27,6 +28,9 @@ public class Guard : MonoBehaviour
     private NavMeshAgent agent;
     private Animator anim;
 
+    [Header("Attack")]
+    public Transform crowbarInHand;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -35,24 +39,26 @@ public class Guard : MonoBehaviour
     void Start()
     {
         LayerMask targetMask = LayerMask.GetMask("player");
+        LayerMask weaponMask = LayerMask.GetMask("weapon");
         LayerMask obstructionMask = LayerMask.GetMask("obstruction");
         BlackBoard blackBoard = new BlackBoard();
         blackBoard.SetValue("agent", agent);
         blackBoard.SetValue("gameObject", gameObject);
         blackBoard.SetValue("noticeThreshhold", noticeTargetThreshold);
         blackBoard.SetValue("currentNotice", 0f);
+        blackBoard.SetValue("hasWeapon", false);
 
         BTBaseNode enemyLookNode = new BTSelector(
             new BTLookNoticeThreshhold(
-                new BTLook(head, targetMask, obstructionMask, radius3, angle3, blackBoard),
+                new BTLook(head, targetMask, obstructionMask, radius3, angle3, blackBoard, "target"),
                 blackBoard, 10
             ),
             new BTLookNoticeThreshhold(
-                new BTLook(head, targetMask, obstructionMask, radius2, angle2, blackBoard),
+                new BTLook(head, targetMask, obstructionMask, radius2, angle2, blackBoard, "target"),
                 blackBoard, 10
             ),
             new BTLookNoticeThreshhold(
-                new BTLook(head, targetMask, obstructionMask, radius1, angle1, blackBoard),
+                new BTLook(head, targetMask, obstructionMask, radius1, angle1, blackBoard, "target"),
                 blackBoard, 10
             )
         );
@@ -80,22 +86,38 @@ public class Guard : MonoBehaviour
                 enemyLookNode,
                 new BTSequence(
                     patrolNodes
-            )),
-            
+                )),
+
             new BTSequence(
-                new BTChaseSimple(agent, blackBoard),
+                //if see weapon pick it up
+                new BTInvert(new BTSequence(
+                    new BTInvert(new BTFailIfBool(blackBoard, "hasWeapon")),
+                    new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
+                    new BTMoveTo(agent, blackBoard, "weapon"),
+                    new BTCheckDistanceAgent(agent, 1f),
+                    new BTAnimate(anim, 0.1f, new AnimatePackage(1, "weaponPickUp")),
+                    new BTWait(1.2f),
+                    new BTPickWeaponUp(blackBoard, crowbarInHand),
+                    new BTAnimate(anim, 0.1f, new AnimatePackage(0, "weaponPickUp")),
+                    new BTWait(5.5f)
+                    )),
+                
+                //new BTDebug("going to target"),
+                new BTMoveTo(agent, blackBoard, "target"),
                 new BTParallelComplete(
                     new BTAnimate(anim, 0.5f, new AnimatePackage(2f, "moveY")),
                     new BTChangeSpeed(agent, 6, 0.5f)
                 ),
-                new BTChaseSimple(agent, blackBoard),
+                new BTMoveTo(agent, blackBoard, "target"),
+                
                 //if enemy is in range attack
                 new BTSequence(
                     new BTRunningToFailed(new BTCheckDistanceAgent(agent, 3)),
                     new BTAnimate(anim, 0.1f, new AnimatePackage(1, "isAttacking")),
                     new BTAnimate(anim, 0.1f, new AnimatePackage(0, "isAttacking"))
                     ),
-                new BTInvert(new BTRunningToFailed(new BTCheckDistanceAgent(agent, 3)))
+
+                new BTInvert(new BTRunningToFailed(new BTCheckDistanceAgent(agent, 30)))
             )
         );
     }
@@ -107,7 +129,6 @@ public class Guard : MonoBehaviour
 
     void FixedUpdate()
     {
-        
         tree?.Run();
     }
 }

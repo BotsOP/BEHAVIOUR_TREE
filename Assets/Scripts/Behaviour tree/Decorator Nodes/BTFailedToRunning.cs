@@ -1,12 +1,10 @@
-using UnityEngine;
-
-namespace Behaviour_tree.Decorator_Nodes
+﻿namespace Behaviour_tree.Decorator_Nodes
 {
-    public class BTInvert : BTBaseNode
+    public class BTFailedToRunning : BTBaseNode
     {
         private BTBaseNode node;
-        public BTInvert(BTBaseNode _node)
-        {
+        public BTFailedToRunning(BTBaseNode _node)
+        { 
             node = _node;
         }
         public override TaskStatus Run()
@@ -15,21 +13,19 @@ namespace Behaviour_tree.Decorator_Nodes
             switch (result)
             {
                 case TaskStatus.Failed:
-                    return TaskStatus.Success;
+                    return TaskStatus.Running;
                 case TaskStatus.Success:
-                    return TaskStatus.Failed;
+                    return TaskStatus.Success;
                 case TaskStatus.Running: 
                     return TaskStatus.Running;
             }
-            return TaskStatus.Failed;
+            return TaskStatus.Running;
         }
         public override void OnEnter()
         {
-            
         }
         public override void OnExit()
         {
-            
         }
     }
 }

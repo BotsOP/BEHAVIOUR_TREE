@@ -17,7 +17,6 @@ namespace Behaviour_tree.Decorator_Nodes
                 case TaskStatus.Failed:
                     return TaskStatus.Failed;
                 case TaskStatus.Success:
-                    Debug.Log("in range");
                     return TaskStatus.Success;
                 case TaskStatus.Running: 
                     return TaskStatus.Failed;
