@@ -28,11 +28,9 @@ namespace Behaviour_tree.Switch_Nodes
         }
         public override void OnEnter()
         {
-            throw new System.NotImplementedException();
         }
         public override void OnExit()
         {
-            throw new System.NotImplementedException();
         }
     }
 }

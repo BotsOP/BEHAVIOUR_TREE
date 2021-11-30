@@ -19,7 +19,8 @@ public class Guard : MonoBehaviour
     public float radius3 = 10;
     public float angle3 = 30;
     
-    public float noticeTargetThreshold = 250;
+    public float noticeTargetThreshold = 1500;
+    public float noticeBuffer = 500;
 
     [Header("Patrol")] 
     public Transform[] patrolPoints;
@@ -60,15 +61,15 @@ public class Guard : MonoBehaviour
             
             new BTLookNoticeThreshhold(
                 new BTLook(head, targetMask, obstructionMask, radius3, angle3, blackBoard, "target"),
-                blackBoard, 10
+                blackBoard, 10, noticeBuffer
             ),
             new BTLookNoticeThreshhold(
                 new BTLook(head, targetMask, obstructionMask, radius2, angle2, blackBoard, "target"),
-                blackBoard, 10
+                blackBoard, 10, noticeBuffer
             ),
             new BTLookNoticeThreshhold(
                 new BTLook(head, targetMask, obstructionMask, radius1, angle1, blackBoard, "target"),
-                blackBoard, 10
+                blackBoard, 10, noticeBuffer
             )
         );
 
@@ -92,24 +93,25 @@ public class Guard : MonoBehaviour
         tree = new BTSwitchNode(
             new BTSequence(
                 new BTUpdateSlider(0, noticeTargetThreshold, blackBoard, "currentNotice", enemyUI),
-
                 new BTSelector(
                     new BTSequence(
                         new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
-                        new BTChangeText(enemyUI, TextDisplay.Happy)),
+                        new BTChangeText(enemyUI, TextDisplay.Happy),
+                        new BTRaiseEvent(EventType.PLAYER_ESCAPED)),
                     new BTSequence(
                         enemyLookNode,
-                        new BTChangeText(enemyUI, TextDisplay.Attack)),
+                        new BTChangeText(enemyUI, TextDisplay.Attack),
+                        new BTRaiseEvent(EventType.PLAYER_SPOTTED)),
                     new BTInvert(new BTNoticeText(enemyUI, blackBoard, "currentNotice"))
                     )
             ),
              new BTSequence(
                  new BTDebug("going patrolling"),
                  new BTChangeText(enemyUI, TextDisplay.Patrolling),
+                 new BTRaiseEvent(EventType.PLAYER_ESCAPED),
                  new BTSequence(patrolNodes)),
             
              new BTSequence(
-                 new BTDebug("see player or weapon"),
                  //if see weapon pick it up
                  new BTInvert(new BTSequence(
                      new BTInvert(new BTFailIfBool(blackBoard, "hasWeapon")),
@@ -131,7 +133,6 @@ public class Guard : MonoBehaviour
                  )),
                  
                  enemyLookNode,
-                 new BTDebug("see player"),
                  new BTChangeText(enemyUI, TextDisplay.Attack),
                  new BTMoveTo(agent, blackBoard, "target"),
                  new BTParallelComplete(

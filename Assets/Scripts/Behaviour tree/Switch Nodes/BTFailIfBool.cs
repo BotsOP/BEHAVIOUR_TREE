@@ -12,6 +12,7 @@ namespace Behaviour_tree.Switch_Nodes
             blackBoard = _blackBoard;
             boolName = _boolName;
         }
+        
         public override TaskStatus Run()
         {
             boolean = blackBoard.GetValue<bool>(boolName);
