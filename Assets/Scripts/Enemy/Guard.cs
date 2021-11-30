@@ -23,14 +23,21 @@ public class Guard : MonoBehaviour
     [Header("Patrol")] 
     public Transform[] patrolPoints;
     public GameObject head;
+    public float walkSpeed;
+    public float runSpeed;
     
-    private BTBaseNode tree;
-    private NavMeshAgent agent;
-    private Animator anim;
 
     [Header("Attack")]
     public Transform crowbarInHand;
 
+    private float animIdleFloat = 0;
+    private float animWalkFloat = 1;
+    private float animRunFloat = 2;
+    
+    private BTBaseNode tree;
+    private NavMeshAgent agent;
+    private Animator anim;
+    
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -69,11 +76,11 @@ public class Guard : MonoBehaviour
             patrolNodes[i] = new BTSequence(
                     new BTMove(agent, patrolPoints[i]),
                     new BTParallelComplete(
-                        new BTAnimate(anim, 0.5f, new AnimatePackage(1f, "moveY")),
-                        new BTChangeSpeed(agent, 1.5F, 0.5f)
+                        new BTAnimate(anim, 0.5f, new AnimatePackage(animWalkFloat, "moveY")),
+                        new BTChangeSpeed(agent, walkSpeed, 0.5f)
                     ),
                     new BTCheckDistanceAgent(agent, 0.3f),
-                    new BTAnimate(anim, 0.5f, new AnimatePackage(0f, "moveY")),
+                    new BTAnimate(anim, 0.5f, new AnimatePackage(animIdleFloat, "moveY")),
                     new BTCheckDistanceAgent(agent, 0.001f),
                     new BTTurn(transform, patrolPoints[i], 0.5f),
                     new BTLookAround(anim)
@@ -94,8 +101,8 @@ public class Guard : MonoBehaviour
                      new BTInvert(new BTFailIfBool(blackBoard, "hasWeapon")),
                      new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
                      new BTParallelComplete(
-                         new BTAnimate(anim, 0.5f, new AnimatePackage(1f, "moveY")),
-                         new BTChangeSpeed(agent, 1.5F, 0.5f)
+                         new BTAnimate(anim, 0.5f, new AnimatePackage(animWalkFloat, "moveY")),
+                         new BTChangeSpeed(agent, walkSpeed, 0.5f)
                      ),
                      new BTMoveTo(agent, blackBoard, "weapon"),
                      new BTCheckDistanceAgent(agent, 0.5f),
@@ -112,8 +119,8 @@ public class Guard : MonoBehaviour
                  new BTDebug("see player"),
                  new BTMoveTo(agent, blackBoard, "target"),
                  new BTParallelComplete(
-                     new BTAnimate(anim, 0.5f, new AnimatePackage(2f, "moveY")),
-                     new BTChangeSpeed(agent, 6, 0.5f)
+                     new BTAnimate(anim, 0.5f, new AnimatePackage(animRunFloat, "moveY")),
+                     new BTChangeSpeed(agent, runSpeed, 0.5f)
                  ),
                  new BTMoveTo(agent, blackBoard, "target"),
 
@@ -121,7 +128,8 @@ public class Guard : MonoBehaviour
                  new BTSequence(
                      new BTRunningToFailed(new BTCheckDistanceAgent(agent, 3)),
                      new BTAnimate(anim, 0.1f, new AnimatePackage(1, "isAttacking")),
-                     new BTAnimate(anim, 0.1f, new AnimatePackage(0, "isAttacking"))
+                     new BTAnimate(anim, 0.1f, new AnimatePackage(0, "isAttacking")),
+                     new BTResetAnim(anim, new AnimatePackage(0, "isAttacking"))
                  ),
 
                  new BTInvert(new BTRunningToFailed(new BTCheckDistanceAgent(agent, 30)))
