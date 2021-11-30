@@ -27,10 +27,11 @@ public class BTLookNoticeThreshhold : BTBaseNode
         }
         if (result == TaskStatus.Failed)
         {
-            float currentNoticeValue = currentNotice - noticeTargetIncrease / 4;
+            float currentNoticeValue = currentNotice - noticeTargetIncrease / 5;
             currentNoticeValue = Mathf.Clamp(currentNoticeValue, 0, noticeThreshHold);
             blackBoard.SetValue("currentNotice", currentNoticeValue);
         }
+        Debug.Log(currentNotice);
 
         if (noticeThreshHold == currentNotice)
         {

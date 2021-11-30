@@ -8,6 +8,7 @@ using UnityEngine.AI;
 
 public class Guard : MonoBehaviour
 {
+    public EnemyUI enemyUI;
     [Header("Vision Cone")]
     public float radius1 = 10;
     public float angle1 = 100;
@@ -56,6 +57,7 @@ public class Guard : MonoBehaviour
         blackBoard.SetValue("hasWeapon", false);
 
         BTBaseNode enemyLookNode = new BTSelector(
+            
             new BTLookNoticeThreshhold(
                 new BTLook(head, targetMask, obstructionMask, radius3, angle3, blackBoard, "target"),
                 blackBoard, 10
@@ -88,18 +90,31 @@ public class Guard : MonoBehaviour
         }
 
         tree = new BTSwitchNode(
-            new BTSelector(
-                new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
-                enemyLookNode
-                ),
+            new BTSequence(
+                new BTUpdateSlider(0, noticeTargetThreshold, blackBoard, "currentNotice", enemyUI),
+
+                new BTSelector(
+                    new BTSequence(
+                        new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
+                        new BTChangeText(enemyUI, TextDisplay.Happy)),
+                    new BTSequence(
+                        enemyLookNode,
+                        new BTChangeText(enemyUI, TextDisplay.Attack)),
+                    new BTInvert(new BTNoticeText(enemyUI, blackBoard, "currentNotice"))
+                    )
+            ),
              new BTSequence(
-                 patrolNodes),
-             
+                 new BTDebug("going patrolling"),
+                 new BTChangeText(enemyUI, TextDisplay.Patrolling),
+                 new BTSequence(patrolNodes)),
+            
              new BTSequence(
+                 new BTDebug("see player or weapon"),
                  //if see weapon pick it up
                  new BTInvert(new BTSequence(
                      new BTInvert(new BTFailIfBool(blackBoard, "hasWeapon")),
                      new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
+                     new BTChangeText(enemyUI, TextDisplay.Happy),
                      new BTParallelComplete(
                          new BTAnimate(anim, 0.5f, new AnimatePackage(animWalkFloat, "moveY")),
                          new BTChangeSpeed(agent, walkSpeed, 0.5f)
@@ -117,6 +132,7 @@ public class Guard : MonoBehaviour
                  
                  enemyLookNode,
                  new BTDebug("see player"),
+                 new BTChangeText(enemyUI, TextDisplay.Attack),
                  new BTMoveTo(agent, blackBoard, "target"),
                  new BTParallelComplete(
                      new BTAnimate(anim, 0.5f, new AnimatePackage(animRunFloat, "moveY")),
