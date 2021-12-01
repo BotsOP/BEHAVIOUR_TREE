@@ -36,6 +36,8 @@ public class BTLookNoticeThreshhold : BTBaseNode
 
         if (noticeThreshHold <= currentNotice)
         {
+            //so enemy doesnt instantly ignores when you quickly go out of his radius
+            blackBoard.SetValue("currentNotice", currentNotice + noticeBuffer);
             return TaskStatus.Success;
         }
         return TaskStatus.Failed;

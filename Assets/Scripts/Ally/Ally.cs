@@ -10,6 +10,8 @@ public class Ally : MonoBehaviour
 {
     public float tooCloseToPlayer;
     public Transform player;
+    public float visionRadius;
+    public float visionAngle;
 
     private BTBaseNode tree;
     private NavMeshAgent agent;
@@ -23,6 +25,9 @@ public class Ally : MonoBehaviour
         
         EventSystem.Subscribe(EventType.PLAYER_SPOTTED, Spotted);
         EventSystem.Subscribe(EventType.PLAYER_ESCAPED, Escaped);
+        
+        LayerMask enemyMask = LayerMask.GetMask("enemy");
+        LayerMask obstructionMask = LayerMask.GetMask("obstruction");
 
         blackBoard = new BlackBoard();
         blackBoard.SetValue("enemySeesUs", false);
@@ -43,7 +48,24 @@ public class Ally : MonoBehaviour
             )),
             
             new BTSequence(
-                new BTDebug("running away")
+                //new BTDebug("running away"),
+                new BTLook(gameObject, enemyMask, obstructionMask, visionRadius, visionAngle, blackBoard, "enemy"),
+                
+                new BTSwitchNode(
+                    new BTLook(gameObject, obstructionMask, visionRadius, visionAngle, blackBoard, "cover", true),
+
+                    new BTSequence(
+                        new BTMoveAwayFrom(agent, transform, blackBoard, "enemy")
+                        ),
+                    
+                    new BTSequence(
+                        new BTGoToClosestPos(agent, blackBoard, "cover", transform),
+                        new BTGoBehindCover(agent, transform, blackBoard, "enemy")
+                        )
+                    
+                    )
+                
+                
                 )
             );
     }
