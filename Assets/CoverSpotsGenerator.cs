@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CubeTest : MonoBehaviour
+public class CoverSpotsGenerator : MonoBehaviour
 {
     [SerializeField] private int numberOfSpots = 5;
     
@@ -39,6 +39,7 @@ public class CubeTest : MonoBehaviour
                 worldSpaceVert.z *= transform.localScale.z;
 
                 worldSpaceVert += transform.position;
+                
                 worldVerts[vertFoundIndex] = worldSpaceVert;
                 vertFoundIndex++;
                 checkedVerts.Add(vertices[i]);
@@ -51,6 +52,7 @@ public class CubeTest : MonoBehaviour
             Vector3 newVector = Quaternion.Euler(0, transform.eulerAngles.y, 0) * localVert;
             newVector += transform.position;
             worldVerts[i] = newVector;
+            Debug.Log(newVector);
         }
         
         //switch 3rd and 4th place so it follows the side of the cube
@@ -72,11 +74,6 @@ public class CubeTest : MonoBehaviour
                 currentPos = currentPos + dir;
                 numberOfOperations++;
             }
-        }
-
-        foreach (var pos in posAroundCube)
-        {
-            Debug.Log(pos);
         }
     }
 }

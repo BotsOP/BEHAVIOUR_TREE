@@ -12,6 +12,7 @@ public class Ally : MonoBehaviour
     public Transform player;
     public float visionRadius;
     public float visionAngle;
+    public Transform enemyTransform;
 
     private BTBaseNode tree;
     private NavMeshAgent agent;
@@ -31,6 +32,7 @@ public class Ally : MonoBehaviour
 
         blackBoard = new BlackBoard();
         blackBoard.SetValue("enemySeesUs", false);
+        blackBoard.SetValue("enemy", enemyTransform);
 
         tree = new BTSwitchNode(
             new BTFailIfBool(blackBoard, "enemySeesUs"),
@@ -55,19 +57,17 @@ public class Ally : MonoBehaviour
                     new BTLook(gameObject, obstructionMask, visionRadius, visionAngle, blackBoard, "cover", true),
 
                     new BTSequence(
-                        new BTMoveAwayFrom(agent, transform, blackBoard, "enemy")
+                        new BTMoveAwayFrom(agent, transform, blackBoard, "enemy"),
+                        new BTDebug("running away")
                         ),
                     
                     new BTSequence(
-                        new BTGoToClosestPos(agent, blackBoard, "cover", transform),
-                        new BTGoBehindCover(agent, transform, blackBoard, "enemy")
+                        new BTGoBehindCover(agent, transform, blackBoard, "enemy", "cover"),
+                        new BTDebug("hiding behind cover"),
+                        new BTWait(1f)
                         )
-                    
-                    )
-                
-                
                 )
-            );
+            ));
     }
 
     //how the fuck am I going to do this with nodes
