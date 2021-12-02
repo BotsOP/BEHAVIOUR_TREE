@@ -36,6 +36,7 @@ namespace Behaviour_tree.Base_Nodes
                     {
                         closestDist = Vector3.Distance(transform.position, cover.position);
                         targetCover = cover;
+                        blackBoard.SetValue("targetCover", cover);
                     }
                 }
 
@@ -55,7 +56,6 @@ namespace Behaviour_tree.Base_Nodes
                     }
                 }
 
-                Debug.Log(closestPos);
                 agent.SetDestination(closestPos);
 
                 return TaskStatus.Success;

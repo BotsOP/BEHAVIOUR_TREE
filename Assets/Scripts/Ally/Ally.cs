@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Behaviour_tree.Base_Nodes;
 using Behaviour_tree.Decorator_Nodes;
 using Behaviour_tree.Switch_Nodes;
+using DefaultNamespace.Behaviour_tree;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -63,6 +64,7 @@ public class Ally : MonoBehaviour
                     
                     new BTSequence(
                         new BTGoBehindCover(agent, transform, blackBoard, "enemy", "cover"),
+                        new BTIsAgainstWall(blackBoard, 1f, transform),
                         new BTDebug("hiding behind cover"),
                         new BTWait(1f)
                         )

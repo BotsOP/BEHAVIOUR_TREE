@@ -1,22 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class CoverSpotsGenerator : MonoBehaviour
 {
-    [SerializeField] private int numberOfSpots = 5;
+    [SerializeField] private int numberOfSpotsPerUnit = 5;
     
     Mesh mesh;
     Vector3[] vertices;
     public List<Vector3> posAroundCube = new List<Vector3>();
+    public Vector3[] worldVerts = new Vector3[4];
     void Start()
     {
         mesh = GetComponent<MeshFilter>().mesh;
         vertices = mesh.vertices;
         
         List<Vector3> checkedVerts = new List<Vector3>();
-        Vector3[] worldVerts = new Vector3[4];
         float sameY = vertices[0].y;
 
         int vertFoundIndex = 0;
@@ -64,11 +65,13 @@ public class CoverSpotsGenerator : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             int secondVert = (i + 1) % 4;
-            Vector3 dir = (worldVerts[secondVert] - worldVerts[i]) / numberOfSpots;
+            int numberOfPoints = (int)(Vector3.Distance(worldVerts[i], worldVerts[secondVert]) * numberOfSpotsPerUnit);
+            Vector3 dir = (worldVerts[secondVert] - worldVerts[i]) / numberOfPoints;
             Vector3 currentPos = worldVerts[i];
+            Debug.Log(HandleUtility.DistancePointLine(FindObjectOfType<Ally>().transform.position, worldVerts[i], worldVerts[secondVert]));
 
             int numberOfOperations = 0;
-            while (numberOfOperations < numberOfSpots)
+            while (numberOfOperations < numberOfPoints)
             {
                 posAroundCube.Add(currentPos);
                 currentPos = currentPos + dir;
