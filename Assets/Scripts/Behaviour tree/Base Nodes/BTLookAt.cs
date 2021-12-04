@@ -29,7 +29,9 @@ namespace Behaviour_tree.Base_Nodes
         }
         public override TaskStatus Run()
         {
-            Debug.Log("turning");
+            transform.LookAt(lookAtTransform);
+            return TaskStatus.Success;
+            
             Vector3 currentDir = transform.rotation * Vector3.forward;
             currentDir = Quaternion.Euler(0, incrementalTime, 0) * currentDir;
             transform.rotation = Quaternion.LookRotation(currentDir, Vector3.up);
@@ -48,7 +50,6 @@ namespace Behaviour_tree.Base_Nodes
             lookDir = lookAt - pos;
             lookDir = Quaternion.Euler(0, 0, 0) * lookDir;
 
-            //Debug.Log(Vector3.Angle(transform.rotation * Vector3.forward, lookDir));
             incrementalTime = Vector3.Angle(transform.rotation * Vector3.forward, lookDir) / 50 * time;
         }
         public override void OnExit()

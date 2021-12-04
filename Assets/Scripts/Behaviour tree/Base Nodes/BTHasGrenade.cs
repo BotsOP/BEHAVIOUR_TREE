@@ -1,21 +1,23 @@
-﻿namespace Behaviour_tree.Base_Nodes
+﻿using UnityEngine;
+
+namespace Behaviour_tree.Base_Nodes
 {
     public class BTHasGrenade : BTBaseNode
     {
-        private float maxGrenades;
-        private float amountGrenades;
+        private BlackBoard blackBoard;
+        private string valueName;
         
-        public BTHasGrenade(float _maxGrenades)
+        public BTHasGrenade(BlackBoard _blackBoard, string _valueName)
         {
-            maxGrenades = _maxGrenades;
+            blackBoard = _blackBoard;
+            valueName = _valueName;
+            blackBoard.SetValue(valueName, 0f);
         }
         public override TaskStatus Run()
         {
-            if (amountGrenades >= maxGrenades)
-            {
-                return TaskStatus.Failed;
-            }
+            float amountGrenades = blackBoard.GetValue<float>(valueName);
             amountGrenades++;
+            blackBoard.SetValue(valueName, amountGrenades);
             return TaskStatus.Success;
         }
         public override void OnEnter()

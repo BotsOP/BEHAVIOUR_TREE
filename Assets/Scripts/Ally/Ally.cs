@@ -18,7 +18,7 @@ public class Ally : MonoBehaviour
     public float maxGrenades;
     public Transform enemyTransform;
     public GameObject grenade;
-    public Rigidbody grenadeRB;
+    public Transform handTransform;
 
     private BTBaseNode tree;
     private NavMeshAgent agent;
@@ -39,6 +39,13 @@ public class Ally : MonoBehaviour
         blackBoard = new BlackBoard();
         blackBoard.SetValue("enemySeesUs", false);
         blackBoard.SetValue("enemy", enemyTransform);
+
+        Vector3 grenadePos = new Vector3(12.6f, 4.4f, -0.2f);
+        //Vector3 grenadePos = Vector3.zero;
+        Quaternion grenadeRotation = Quaternion.Euler(new Vector3(-92.47f, 0, 0));
+        //Quaternion grenadeRotation = Quaternion.identity;
+        //float grenadeScale = 76.41807f;
+        float grenadeScale = 1;
 
         tree = new BTSwitchNode(
             new BTFailIfBool(blackBoard, "enemySeesUs"),
@@ -81,17 +88,29 @@ public class Ally : MonoBehaviour
                         ),
                         
                         new BTIsAgainstWall(blackBoard, 1f, transform),
-                        new BTLookAt(transform, player, 0.5f),
-                        new BTDebug("has enough grenades"),
-                        new BTAnimate(anim, 0.5f, new AnimatePackage(1, "throw")),
-                        new BTWait(3f),
-                        new BTActivateObject(grenade, true),
-                        new BTParentObject(grenade, null),
-                        new BTThrow(grenadeRB, player),
-                        new BTWait(0.1f),
-                        new BTActivateComponent(grenade, null, true),
-                        new BTAnimate(anim, 0.5f, new AnimatePackage(0, "throw")),
-                        new BTHasGrenade(maxGrenades)
+                        
+                        new BTSwitchNode(
+                            new BTMoreThen(blackBoard, "amountGrenades", maxGrenades),
+
+                            new BTSequence(
+                                new BTDebug("out of grenades"),
+                                new BTAnimate(anim, 0.1f, new AnimatePackage(1, "cover"))
+                                ),
+                            
+                            new BTSequence(
+                                new BTLookAt(transform, player, 0.5f),
+                                new BTAnimate(anim, 0.5f, new AnimatePackage(1, "throw")),
+                                new BTWait(3f),
+                                new BTInstantiate(grenade, grenadePos, grenadeRotation, grenadeScale, handTransform, blackBoard, "grenade"),
+                                new BTParentObject(blackBoard, "grenade", null),
+                                new BTThrow(blackBoard, "grenade", player),
+                                new BTDebug("threw grenade"),
+                                new BTWait(3f),
+                                new BTHasGrenade(blackBoard, "amountGrenades"),
+                                new BTMoreThen(blackBoard, "amountGrenades", maxGrenades),
+                                new BTWait(2f)
+
+                            ))
                     ),
                 
                 new BTSwitchNode(
