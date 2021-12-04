@@ -1147,7 +1147,7 @@ MonoBehaviour:
   visionAngle: 360
   walkSpeed: 2
   runSpeed: 5
-  maxGrenades: 3
+  maxGrenades: 1
   enemyTransform: {fileID: 5006512735735876005}
   grenade: {fileID: 7246040813553861032, guid: 720c8daa9221a1b4b97af156d776573d, type: 3}
   handTransform: {fileID: 1546028292}
