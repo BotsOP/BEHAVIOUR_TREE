@@ -13,7 +13,12 @@ public class Ally : MonoBehaviour
     public Transform player;
     public float visionRadius;
     public float visionAngle;
+    public float walkSpeed;
+    public float runSpeed;
+    public float maxGrenades;
     public Transform enemyTransform;
+    public GameObject grenade;
+    public Rigidbody grenadeRB;
 
     private BTBaseNode tree;
     private NavMeshAgent agent;
@@ -38,36 +43,81 @@ public class Ally : MonoBehaviour
         tree = new BTSwitchNode(
             new BTFailIfBool(blackBoard, "enemySeesUs"),
             new BTSequence(
-            new BTSwitchNode(
-                new BTInvert(new BTCheckDistance(tooCloseToPlayer, player, transform)),
+                new BTSwitchNode(
+                    new BTInvert(new BTCheckDistance(tooCloseToPlayer, player, transform)),
 
-                new BTSequence(
-                    new BTMove(agent, transform)
-                ),
+                    new BTSequence(
+                        new BTMove(agent, transform),
+                        new BTParallelComplete(
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(1, "moveY")),
+                            new BTChangeSpeed(agent, walkSpeed, 0.5f)
+                        ),
+                        new BTLookAt(transform, player, 10f, -50)
+                    ),
 
-                new BTSequence(
-                    new BTMove(agent, player)
-                )
-            )),
-            
+                    new BTSequence(
+                        new BTMove(agent, player),
+                        new BTParallelComplete(
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(1, "moveY")),
+                            new BTChangeSpeed(agent, walkSpeed, 0.5f)
+                        )
+                    )
+                )),
+
             new BTSequence(
-                //new BTDebug("running away"),
-                new BTLook(gameObject, enemyMask, obstructionMask, visionRadius, visionAngle, blackBoard, "enemy"),
+                new BTParallelComplete(
+                    new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
+                    new BTChangeSpeed(agent, runSpeed, 0.5f)
+                ),
+                new BTSwitchNode(
+                    new BTLook(gameObject, enemyMask, obstructionMask, visionRadius, visionAngle, blackBoard, "enemy"),
+
+                    new BTSequence(
+                        new BTDebug("not there cover"),
+                        new BTCheckDistanceAgent(agent, 0.1f),
+                        new BTParallelComplete(
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
+                            new BTChangeSpeed(agent, runSpeed, 0.5f)
+                        ),
+                        
+                        new BTIsAgainstWall(blackBoard, 1f, transform),
+                        new BTLookAt(transform, player, 0.5f),
+                        new BTDebug("has enough grenades"),
+                        new BTAnimate(anim, 0.5f, new AnimatePackage(1, "throw")),
+                        new BTWait(3f),
+                        new BTActivateObject(grenade, true),
+                        new BTParentObject(grenade, null),
+                        new BTThrow(grenadeRB, player),
+                        new BTWait(0.1f),
+                        new BTActivateComponent(grenade, null, true),
+                        new BTAnimate(anim, 0.5f, new AnimatePackage(0, "throw")),
+                        new BTHasGrenade(maxGrenades)
+                    ),
                 
                 new BTSwitchNode(
                     new BTLook(gameObject, obstructionMask, visionRadius, visionAngle, blackBoard, "cover", true),
 
                     new BTSequence(
+                        new BTDebug("cant see obstruction"),
                         new BTMoveAwayFrom(agent, transform, blackBoard, "enemy"),
-                        new BTDebug("running away")
-                        ),
+                        
+                        new BTParallelComplete(
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
+                            new BTChangeSpeed(agent, runSpeed, 0.5f)
+                        )
+                    ),
                     
                     new BTSequence(
+                        new BTDebug("going behind cover"),
                         new BTGoBehindCover(agent, transform, blackBoard, "enemy", "cover"),
-                        new BTIsAgainstWall(blackBoard, 1f, transform),
-                        new BTDebug("hiding behind cover"),
-                        new BTWait(1f)
+                        new BTIsAgainstWall(blackBoard, 0.5f, transform),
+                        
+                        new BTParallelComplete(
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
+                            new BTChangeSpeed(agent, runSpeed, 0.5f)
                         )
+                        
+                    ))
                 )
             ));
     }

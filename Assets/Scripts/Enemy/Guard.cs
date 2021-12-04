@@ -56,7 +56,7 @@ public class Guard : MonoBehaviour
         blackBoard.SetValue("noticeThreshhold", noticeTargetThreshold);
         blackBoard.SetValue("currentNotice", 0f);
         blackBoard.SetValue("hasWeapon", false);
-
+        
         BTBaseNode enemyLookNode = new BTSelector(
             
             new BTLookNoticeThreshhold(
@@ -72,7 +72,7 @@ public class Guard : MonoBehaviour
                 blackBoard, 10, noticeBuffer
             )
         );
-
+        
         BTBaseNode[] patrolNodes = new BTBaseNode[patrolPoints.Length];
         for (int i = 0; i < patrolPoints.Length; i++)
         {

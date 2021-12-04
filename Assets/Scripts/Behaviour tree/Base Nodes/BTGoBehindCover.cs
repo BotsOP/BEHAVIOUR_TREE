@@ -55,7 +55,7 @@ namespace Behaviour_tree.Base_Nodes
                         closestPos = pos;
                     }
                 }
-
+                
                 agent.SetDestination(closestPos);
 
                 return TaskStatus.Success;

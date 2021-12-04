@@ -53,7 +53,6 @@ public class CoverSpotsGenerator : MonoBehaviour
             Vector3 newVector = Quaternion.Euler(0, transform.eulerAngles.y, 0) * localVert;
             newVector += transform.position;
             worldVerts[i] = newVector;
-            Debug.Log(newVector);
         }
         
         //switch 3rd and 4th place so it follows the side of the cube
@@ -68,7 +67,7 @@ public class CoverSpotsGenerator : MonoBehaviour
             int numberOfPoints = (int)(Vector3.Distance(worldVerts[i], worldVerts[secondVert]) * numberOfSpotsPerUnit);
             Vector3 dir = (worldVerts[secondVert] - worldVerts[i]) / numberOfPoints;
             Vector3 currentPos = worldVerts[i];
-            Debug.Log(HandleUtility.DistancePointLine(FindObjectOfType<Ally>().transform.position, worldVerts[i], worldVerts[secondVert]));
+            //Debug.Log(HandleUtility.DistancePointLine(FindObjectOfType<Ally>().transform.position, worldVerts[i], worldVerts[secondVert]));
 
             int numberOfOperations = 0;
             while (numberOfOperations < numberOfPoints)
