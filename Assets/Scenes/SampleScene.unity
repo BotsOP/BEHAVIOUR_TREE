@@ -1147,7 +1147,7 @@ MonoBehaviour:
   visionAngle: 360
   walkSpeed: 2
   runSpeed: 5
-  maxGrenades: 1
+  maxGrenades: 3
   enemyTransform: {fileID: 5006512735735876005}
   grenade: {fileID: 7246040813553861032, guid: 720c8daa9221a1b4b97af156d776573d, type: 3}
   handTransform: {fileID: 1546028292}
@@ -1178,7 +1178,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 224223680}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 0, z: -2.54}
+  m_LocalPosition: {x: 2.32, y: 0, z: 5.14}
   m_LocalScale: {x: 1.177, y: 1.177, z: 1.177}
   m_Children:
   - {fileID: 540431684}
@@ -10488,13 +10488,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1753175620}
-  m_LocalRotation: {x: -0, y: 0.09944848, z: -0, w: 0.9950428}
-  m_LocalPosition: {x: 0, y: -1.75, z: 2.23}
-  m_LocalScale: {x: 4.696479, y: 2.3886, z: 0.22183}
+  m_LocalRotation: {x: -0, y: 0.14835565, z: -0, w: 0.98893416}
+  m_LocalPosition: {x: -0.05, y: -2.14, z: 0.52}
+  m_LocalScale: {x: 5.3317204, y: 3.1909, z: 0.2811}
   m_Children: []
   m_Father: {fileID: 1859177539}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 11.415, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 17.063, z: 0}
 --- !u!114 &1753175625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12141,7 +12141,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1981511029}
   m_LocalRotation: {x: -0, y: -0.9960365, z: -0, w: 0.08894516}
-  m_LocalPosition: {x: -4.2, y: 1, z: -1.91}
+  m_LocalPosition: {x: -0.78, y: 1, z: 4.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 963194228}
@@ -21190,12 +21190,12 @@ MonoBehaviour:
   enemyUI: {fileID: 627896694}
   radius1: 5
   angle1: 360
-  radius2: 10
+  radius2: 5
   angle2: 90
-  radius3: 10
+  radius3: 5
   angle3: 30
   noticeTargetThreshold: 1500
-  noticeBuffer: 500
+  noticeBuffer: 100
   patrolPoints:
   - {fileID: 2114653202}
   - {fileID: 1711942205}

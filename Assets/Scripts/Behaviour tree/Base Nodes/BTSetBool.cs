@@ -2,28 +2,29 @@
 
 namespace Behaviour_tree.Base_Nodes
 {
-    public class BTHasGrenade : BTBaseNode
+    public class BTSetBool : BTBaseNode
     {
         private BlackBoard blackBoard;
         private string valueName;
-        
-        public BTHasGrenade(BlackBoard _blackBoard, string _valueName)
+        private bool value;
+        public BTSetBool(BlackBoard _blackBoard, string _valueName, bool _value)
         {
             blackBoard = _blackBoard;
             valueName = _valueName;
-            blackBoard.SetValue(valueName, 0f);
+            value = _value;
         }
+
         public override TaskStatus Run()
         {
-            float amountGrenades = blackBoard.GetValue<float>(valueName);
-            amountGrenades++;
-            blackBoard.SetValue(valueName, amountGrenades);
-            //Debug.Log(amountGrenades);
+            Debug.Log("im here");
+            blackBoard.SetValue(valueName, value);
             return TaskStatus.Success;
         }
+
         public override void OnEnter()
         {
         }
+
         public override void OnExit()
         {
         }

@@ -18,7 +18,6 @@ namespace Behaviour_tree.Base_Nodes
             blackBoard = _blackBoard;
             targetName = _targetName;
             transform = _transform;
-
         }
         public override TaskStatus Run()
         {

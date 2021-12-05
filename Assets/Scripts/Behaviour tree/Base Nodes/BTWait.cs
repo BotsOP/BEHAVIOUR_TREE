@@ -12,7 +12,6 @@ public class BTWait : BTBaseNode
     }
     public override TaskStatus Run()
     {
-        //Debug.Log(Time.time + "   " + starTime + "   " + waitTime);
         if (Time.time - starTime > waitTime)
         {
             return TaskStatus.Success;

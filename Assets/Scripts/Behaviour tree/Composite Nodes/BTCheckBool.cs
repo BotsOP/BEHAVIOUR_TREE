@@ -1,34 +1,32 @@
 ﻿using UnityEngine;
 
-namespace Behaviour_tree.Base_Nodes
+namespace DefaultNamespace.Behaviour_tree.Composite_Nodes
 {
-    public class BTMoreThen : BTBaseNode
+    public class BTCheckBool : BTBaseNode
     {
         private BlackBoard blackBoard;
         private string valueName;
-        private float moreThen;
-
-        private float value;
-        public BTMoreThen(BlackBoard _blackBoard, string _valueName, float _moreThen)
+        public BTCheckBool(BlackBoard _blackBoard, string _valueName)
         {
             blackBoard = _blackBoard;
             valueName = _valueName;
-            moreThen = _moreThen;
-
         }
+
         public override TaskStatus Run()
         {
-            value = blackBoard.GetValue<float>(valueName);
-            //Debug.Log(value + "   " + moreThen);
-            if (value < moreThen)
+            bool boolean = blackBoard.GetValue<bool>(valueName);
+            if (boolean)
             {
                 return TaskStatus.Success;
             }
+
             return TaskStatus.Failed;
         }
+
         public override void OnEnter()
         {
         }
+
         public override void OnExit()
         {
         }

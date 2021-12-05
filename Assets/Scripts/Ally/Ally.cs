@@ -4,6 +4,7 @@ using Behaviour_tree.Base_Nodes;
 using Behaviour_tree.Decorator_Nodes;
 using Behaviour_tree.Switch_Nodes;
 using DefaultNamespace.Behaviour_tree;
+using DefaultNamespace.Behaviour_tree.Composite_Nodes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -39,6 +40,7 @@ public class Ally : MonoBehaviour
         blackBoard = new BlackBoard();
         blackBoard.SetValue("enemySeesUs", false);
         blackBoard.SetValue("enemy", enemyTransform);
+        blackBoard.SetValue("isThrowing", false);
 
         Vector3 grenadePos = new Vector3(12.6f, 4.4f, -0.2f);
         //Vector3 grenadePos = Vector3.zero;
@@ -56,7 +58,7 @@ public class Ally : MonoBehaviour
                     new BTSequence(
                         new BTMove(agent, transform),
                         new BTParallelComplete(
-                            new BTAnimate(anim, 0.5f, new AnimatePackage(1, "moveY")),
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(0, "moveY")),
                             new BTChangeSpeed(agent, walkSpeed, 0.5f)
                         ),
                         new BTLookAt(transform, player, 10f, -50)
@@ -80,7 +82,6 @@ public class Ally : MonoBehaviour
                     new BTLook(gameObject, enemyMask, obstructionMask, visionRadius, visionAngle, blackBoard, "enemy"),
 
                     new BTSequence(
-                        new BTDebug("not there cover"),
                         new BTCheckDistanceAgent(agent, 0.1f),
                         new BTParallelComplete(
                             new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
@@ -90,26 +91,33 @@ public class Ally : MonoBehaviour
                         new BTIsAgainstWall(blackBoard, 1f, transform),
                         
                         new BTSwitchNode(
-                            new BTMoreThen(blackBoard, "amountGrenades", maxGrenades),
+                            new BTSequence(
+                                new BTMoreThen(blackBoard, "amountGrenades", maxGrenades),
+                                new BTInvert(new BTCheckBool(blackBoard, "isThrowing"))
+                                ),
 
                             new BTSequence(
-                                new BTDebug("out of grenades"),
                                 new BTAnimate(anim, 0.1f, new AnimatePackage(1, "cover"))
                                 ),
                             
                             new BTSequence(
+                                new BTSetBool(blackBoard, "isThrowing", true),
+                                new BTDebug("threw grenade"),
                                 new BTLookAt(transform, player, 0.5f),
-                                new BTAnimate(anim, 0.5f, new AnimatePackage(1, "throw")),
+                                new BTDebug("threw grenade2"),
+                                new BTAnimate(anim, 0.5f, new AnimatePackage(1, "throw"), true),
+                                new BTDebug("threw grenade3"),
                                 new BTWait(3f),
+                                new BTDebug("threw grenade4"),
                                 new BTInstantiate(grenade, grenadePos, grenadeRotation, grenadeScale, handTransform, blackBoard, "grenade"),
+                                new BTDebug("threw grenade5"),
                                 new BTParentObject(blackBoard, "grenade", null),
                                 new BTThrow(blackBoard, "grenade", player),
-                                new BTDebug("threw grenade"),
                                 new BTWait(3f),
                                 new BTHasGrenade(blackBoard, "amountGrenades"),
                                 new BTMoreThen(blackBoard, "amountGrenades", maxGrenades),
-                                new BTWait(2f)
-
+                                new BTWait(2f),
+                                new BTSetBool(blackBoard, "isThrowing", false)
                             ))
                     ),
                 

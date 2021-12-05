@@ -10,11 +10,20 @@ public class BTAnimate : BTBaseNode
     private float animationTime;
     private float currentValue;
     private bool equalAnimations;
+    private bool debug;
     
     public BTAnimate(Animator _anim, float _animationTime, AnimatePackage _animatePackage)
     {
         animationTime = _animationTime;
         animatePackage = _animatePackage;
+
+        anim = _anim;
+    }
+    public BTAnimate(Animator _anim, float _animationTime, AnimatePackage _animatePackage, bool _debug)
+    {
+        animationTime = _animationTime;
+        animatePackage = _animatePackage;
+        debug = _debug;
 
         anim = _anim;
     }
@@ -35,10 +44,16 @@ public class BTAnimate : BTBaseNode
         
         if (Math.Abs(anim.GetFloat(animatePackage.animationName) - animatePackage.animationValue) < 0.1)
         {
+            if (debug)
+            {
+                Debug.Log("running");
+            }
+            
             anim.SetFloat(animatePackage.animationName, animatePackage.animationValue);
             return TaskStatus.Success;
         }
 
+        
         return TaskStatus.Running;
     }
     public override void OnEnter()
