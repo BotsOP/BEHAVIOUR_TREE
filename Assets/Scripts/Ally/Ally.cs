@@ -41,7 +41,7 @@ public class Ally : MonoBehaviour
         blackBoard = new BlackBoard();
         blackBoard.SetValue("enemySeesUs", false);
         blackBoard.SetValue("enemy", enemyTransform);
-        blackBoard.SetValue("isThrowing", true);
+        blackBoard.SetValue("isThrowing", false);
 
         Vector3 grenadePos = new Vector3(12.6f, 4.4f, -0.2f);
         //Vector3 grenadePos = Vector3.zero;
@@ -57,78 +57,102 @@ public class Ally : MonoBehaviour
                     new BTInvert(new BTCheckDistance(tooCloseToPlayer, player, transform)),
 
                     new BTSequence(
+                        new BTDebug("idle"),
                         new BTChangeText(allyUI, TextDisplay.Idle),
                         new BTMove(agent, transform),
                         new BTParallelComplete(
                             new BTAnimate(anim, 0.5f, new AnimatePackage(0, "moveY")),
                             new BTAnimate(anim, 0.5f, new AnimatePackage(0, "throw")),
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(0, "cover")),
                             new BTChangeSpeed(agent, walkSpeed, 0.5f)
                         ),
                         new BTLookAt(transform, player, 10f, -50)
                     ),
 
                     new BTSequence(
+                        new BTDebug("walking to player"),
                         new BTMove(agent, player),
                         new BTChangeText(allyUI, TextDisplay.Following),
                         new BTParallelComplete(
                             new BTAnimate(anim, 0.5f, new AnimatePackage(1, "moveY")),
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(0, "throw")),
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(0, "cover")),
                             new BTChangeSpeed(agent, walkSpeed, 0.5f)
                         )
                     )
                 )),
 
             new BTSequence(
+                new BTDebug("enemy sees us"),
                 new BTParallelComplete(
                     new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
                     new BTChangeSpeed(agent, runSpeed, 0.5f)
                 ),
                 new BTSwitchNode(
-                    new BTLook(gameObject, enemyMask, obstructionMask, visionRadius, visionAngle, blackBoard, "enemy"),
+                    new BTMimicIfSucceeds(
+                        new BTInvert(new BTCheckBool(blackBoard, "isThrowing")), 
+                        new BTLook(gameObject, enemyMask, obstructionMask, visionRadius, visionAngle, blackBoard, "enemy")
+                        ),
 
-                    new BTSequence(
+        new BTSequence(
+            new BTDebug("dont see enemy"),
                         new BTCheckDistanceAgent(agent, 0.1f),
                         new BTParallelComplete(
                             new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
                             new BTChangeSpeed(agent, runSpeed, 0.5f)
                         ),
-                        
-                        new BTIsAgainstWall(blackBoard, 1f, transform),
+
+                        new BTSwitchNode(new BTIsAgainstWall(blackBoard, 1f, transform),
+                            new BTSetBool(blackBoard, "isThrowing", false),
+                            new BTDebug("against wall")
+                            ),
                         
                         new BTSwitchNode(
                             new BTSequence(
-                                new BTMoreThen(blackBoard, "amountGrenades", maxGrenades),
-                                new BTCheckBool(blackBoard, "isThrowing")
-                                ),
+                                new BTMoreThen(blackBoard, "amountGrenades", maxGrenades)
+                            ),
 
                             new BTSequence(
+                                new BTDebug("behind cover dont see enemy and no grenades"),
                                 new BTChangeText(allyUI, TextDisplay.RunningAway),
                                 new BTAnimate(anim, 0.1f, new AnimatePackage(1, "cover"))
                                 ),
-                            
-                            new BTSequence(
+
+                            new BTParallelComplete(
+                                new BTSequence(
+                                    new BTDebug("behind cover dont see enemy and grenade"),
                                 new BTSetBool(blackBoard, "isThrowing", true),
                                 new BTChangeText(allyUI, TextDisplay.ThrowingGrenade),
                                 new BTLookAt(transform, player, 0.5f),
-                                new BTAnimate(anim, 0.5f, new AnimatePackage(1, "throw"), true),
-                                new BTDebug("throwing greande"),
+                                new BTAnimate(anim, 0.5f, new AnimatePackage(1, "throw")),
                                 new BTWait(3f),
                                 new BTInstantiate(grenade, grenadePos, grenadeRotation, grenadeScale, handTransform, blackBoard, "grenade"),
                                 new BTParentObject(blackBoard, "grenade", null),
                                 new BTThrow(blackBoard, "grenade", player),
                                 new BTWait(3f),
                                 new BTHasGrenade(blackBoard, "amountGrenades"),
-                                new BTMoreThen(blackBoard, "amountGrenades", maxGrenades),
-                                new BTWait(2f),
-                                new BTSetBool(blackBoard, "isThrowing", false)
-                            ))
+                                
+                                new BTSwitchNode(new BTMoreThen(blackBoard, "amountGrenades", maxGrenades),
+                                    new BTSequence(
+                                        new BTSetBool(blackBoard, "isThrowing", false)
+                                        ),
+                                    new BTSequence(
+                                        new BTWait(2f),
+                                        new BTSetBool(blackBoard, "isThrowing", false)
+                                        )
+                                    )
+                                ),
+                                new BTLookAt(transform, player, 0.5f)
+                                ))
                     ),
 
                     new BTSequence(
+                        new BTDebug("see enemy and looking for cover"),
+
                         new BTSwitchNode(
                     new BTLook(gameObject, obstructionMask, visionRadius, visionAngle, blackBoard, "cover", true),
 
                     new BTSequence(
-                        new BTDebug("cant see obstruction"),
                         new BTMoveAwayFrom(agent, transform, blackBoard, "enemy"),
                         
                         new BTParallelComplete(
@@ -138,12 +162,13 @@ public class Ally : MonoBehaviour
                     ),
                     
                     new BTSequence(
-                        new BTDebug("going behind cover"),
+                        new BTDebug("see enemy and walking toward cover"),
                         new BTGoBehindCover(agent, transform, blackBoard, "enemy", "cover"),
-                        new BTIsAgainstWall(blackBoard, 0.5f, transform),
+                        //new BTIsAgainstWall(blackBoard, 0.5f, transform),
                         
                         new BTParallelComplete(
                             new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
+                            new BTAnimate(anim, 0.1f, new AnimatePackage(0, "throw")),
                             new BTChangeSpeed(agent, runSpeed, 0.5f)
                         )
                         

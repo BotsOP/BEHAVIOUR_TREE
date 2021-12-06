@@ -116,6 +116,7 @@ public class Guard : MonoBehaviour
                  new BTInvert(new BTSequence(
                      new BTInvert(new BTFailIfBool(blackBoard, "hasWeapon")),
                      new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
+                     new BTRaiseEvent(EventType.PLAYER_ESCAPED),
                      new BTChangeText(enemyUI, TextDisplay.Happy),
                      new BTParallelComplete(
                          new BTAnimate(anim, 0.5f, new AnimatePackage(animWalkFloat, "moveY")),

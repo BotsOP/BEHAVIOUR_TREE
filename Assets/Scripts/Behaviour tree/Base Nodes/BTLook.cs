@@ -36,6 +36,7 @@ public class BTLook : BTBaseNode
     public override TaskStatus Run()
     {
         fov.Update();
+        
         if (fov.canSeeTarget)
         {
             if (returnList)

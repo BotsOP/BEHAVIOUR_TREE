@@ -29,7 +29,7 @@ public class BTLookNoticeThreshhold : BTBaseNode
         }
         if (result == TaskStatus.Failed)
         {
-            float currentNoticeValue = currentNotice - noticeTargetIncrease / 5;
+            float currentNoticeValue = currentNotice - noticeTargetIncrease / 3;
             currentNoticeValue = Mathf.Clamp(currentNoticeValue, 0, noticeThreshHold + noticeBuffer);
             blackBoard.SetValue("currentNotice", currentNoticeValue);
         }
@@ -37,7 +37,6 @@ public class BTLookNoticeThreshhold : BTBaseNode
         if (noticeThreshHold <= currentNotice)
         {
             //so enemy doesnt instantly ignores when you quickly go out of his radius
-            blackBoard.SetValue("currentNotice", currentNotice + noticeBuffer);
             return TaskStatus.Success;
         }
         return TaskStatus.Failed;

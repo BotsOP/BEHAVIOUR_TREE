@@ -16,7 +16,6 @@ namespace Behaviour_tree.Base_Nodes
 
         public override TaskStatus Run()
         {
-            Debug.Log("im here");
             blackBoard.SetValue(valueName, value);
             return TaskStatus.Success;
         }

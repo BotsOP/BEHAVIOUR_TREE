@@ -38,7 +38,10 @@ public class BTAnimate : BTBaseNode
         {
             currentValue = (animatePackage.animationValue - anim.GetFloat(animatePackage.animationName)) / (50 * animationTime);
         }
-        //Debug.Log(currentValue + "      " + animatePackage.animationValue + "   " + anim.GetFloat(animatePackage.animationName));
+        if (debug)
+        {
+            Debug.Log(currentValue + "      " + animatePackage.animationValue + "   " + anim.GetFloat(animatePackage.animationName));
+        }
         
         anim.SetFloat(animatePackage.animationName, anim.GetFloat(animatePackage.animationName) + currentValue);
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657856, g: 0.49641234, b: 0.57481724, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -21204,14 +21204,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyUI: {fileID: 627896694}
-  radius1: 5
+  radius1: 10
   angle1: 360
-  radius2: 5
+  radius2: 10
   angle2: 90
-  radius3: 5
+  radius3: 10
   angle3: 30
   noticeTargetThreshold: 1500
-  noticeBuffer: 100
+  noticeBuffer: 300
   patrolPoints:
   - {fileID: 2114653202}
   - {fileID: 1711942205}
@@ -21219,7 +21219,7 @@ MonoBehaviour:
   - {fileID: 622841056}
   head: {fileID: 8296172668790995894}
   walkSpeed: 1.5
-  runSpeed: 6
+  runSpeed: 2
   crowbarInHand: {fileID: 1957015627}
 --- !u!195 &8296172668790995897
 NavMeshAgent:
