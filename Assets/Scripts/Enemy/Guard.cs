@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 public class Guard : MonoBehaviour
 {
-    public EnemyUI enemyUI;
+    public AgentUI enemyUI;
     [Header("Vision Cone")]
     public float radius1 = 10;
     public float angle1 = 100;

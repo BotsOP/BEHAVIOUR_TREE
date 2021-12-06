@@ -41,14 +41,9 @@ public class BTAnimate : BTBaseNode
         //Debug.Log(currentValue + "      " + animatePackage.animationValue + "   " + anim.GetFloat(animatePackage.animationName));
         
         anim.SetFloat(animatePackage.animationName, anim.GetFloat(animatePackage.animationName) + currentValue);
-        
+
         if (Math.Abs(anim.GetFloat(animatePackage.animationName) - animatePackage.animationValue) < 0.1)
         {
-            if (debug)
-            {
-                Debug.Log("running");
-            }
-            
             anim.SetFloat(animatePackage.animationName, animatePackage.animationValue);
             return TaskStatus.Success;
         }

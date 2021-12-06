@@ -2,11 +2,11 @@ namespace Behaviour_tree.Base_Nodes
 {
     public class BTNoticeText : BTBaseNode
     {
-        private EnemyUI enemyUI;
+        private AgentUI enemyUI;
         private BlackBoard blackBoard;
         private string valueName;
         
-        public BTNoticeText(EnemyUI _enemyUI, BlackBoard _blackBoard, string _valueName)
+        public BTNoticeText(AgentUI _enemyUI, BlackBoard _blackBoard, string _valueName)
         {
             enemyUI = _enemyUI;
             blackBoard = _blackBoard;

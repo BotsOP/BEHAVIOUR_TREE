@@ -6,8 +6,8 @@ namespace Behaviour_tree.Base_Nodes
         private float max;
         private BlackBoard blackBoard;
         private string valueName;
-        private EnemyUI enemyUI;
-        public BTUpdateSlider(float _min, float _max, BlackBoard _blackBoard, string _valueName, EnemyUI _enemyUI)
+        private AgentUI enemyUI;
+        public BTUpdateSlider(float _min, float _max, BlackBoard _blackBoard, string _valueName, AgentUI _enemyUI)
         {
             min = _min;
             max = _max;

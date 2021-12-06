@@ -20,6 +20,7 @@ public class Ally : MonoBehaviour
     public Transform enemyTransform;
     public GameObject grenade;
     public Transform handTransform;
+    public AgentUI allyUI;
 
     private BTBaseNode tree;
     private NavMeshAgent agent;
@@ -40,7 +41,7 @@ public class Ally : MonoBehaviour
         blackBoard = new BlackBoard();
         blackBoard.SetValue("enemySeesUs", false);
         blackBoard.SetValue("enemy", enemyTransform);
-        blackBoard.SetValue("isThrowing", false);
+        blackBoard.SetValue("isThrowing", true);
 
         Vector3 grenadePos = new Vector3(12.6f, 4.4f, -0.2f);
         //Vector3 grenadePos = Vector3.zero;
@@ -56,9 +57,11 @@ public class Ally : MonoBehaviour
                     new BTInvert(new BTCheckDistance(tooCloseToPlayer, player, transform)),
 
                     new BTSequence(
+                        new BTChangeText(allyUI, TextDisplay.Idle),
                         new BTMove(agent, transform),
                         new BTParallelComplete(
                             new BTAnimate(anim, 0.5f, new AnimatePackage(0, "moveY")),
+                            new BTAnimate(anim, 0.5f, new AnimatePackage(0, "throw")),
                             new BTChangeSpeed(agent, walkSpeed, 0.5f)
                         ),
                         new BTLookAt(transform, player, 10f, -50)
@@ -66,6 +69,7 @@ public class Ally : MonoBehaviour
 
                     new BTSequence(
                         new BTMove(agent, player),
+                        new BTChangeText(allyUI, TextDisplay.Following),
                         new BTParallelComplete(
                             new BTAnimate(anim, 0.5f, new AnimatePackage(1, "moveY")),
                             new BTChangeSpeed(agent, walkSpeed, 0.5f)
@@ -93,24 +97,22 @@ public class Ally : MonoBehaviour
                         new BTSwitchNode(
                             new BTSequence(
                                 new BTMoreThen(blackBoard, "amountGrenades", maxGrenades),
-                                new BTInvert(new BTCheckBool(blackBoard, "isThrowing"))
+                                new BTCheckBool(blackBoard, "isThrowing")
                                 ),
 
                             new BTSequence(
+                                new BTChangeText(allyUI, TextDisplay.RunningAway),
                                 new BTAnimate(anim, 0.1f, new AnimatePackage(1, "cover"))
                                 ),
                             
                             new BTSequence(
                                 new BTSetBool(blackBoard, "isThrowing", true),
-                                new BTDebug("threw grenade"),
+                                new BTChangeText(allyUI, TextDisplay.ThrowingGrenade),
                                 new BTLookAt(transform, player, 0.5f),
-                                new BTDebug("threw grenade2"),
                                 new BTAnimate(anim, 0.5f, new AnimatePackage(1, "throw"), true),
-                                new BTDebug("threw grenade3"),
+                                new BTDebug("throwing greande"),
                                 new BTWait(3f),
-                                new BTDebug("threw grenade4"),
                                 new BTInstantiate(grenade, grenadePos, grenadeRotation, grenadeScale, handTransform, blackBoard, "grenade"),
-                                new BTDebug("threw grenade5"),
                                 new BTParentObject(blackBoard, "grenade", null),
                                 new BTThrow(blackBoard, "grenade", player),
                                 new BTWait(3f),
@@ -120,8 +122,9 @@ public class Ally : MonoBehaviour
                                 new BTSetBool(blackBoard, "isThrowing", false)
                             ))
                     ),
-                
-                new BTSwitchNode(
+
+                    new BTSequence(
+                        new BTSwitchNode(
                     new BTLook(gameObject, obstructionMask, visionRadius, visionAngle, blackBoard, "cover", true),
 
                     new BTSequence(
@@ -144,7 +147,9 @@ public class Ally : MonoBehaviour
                             new BTChangeSpeed(agent, runSpeed, 0.5f)
                         )
                         
-                    ))
+                    )),
+                        new BTChangeText(allyUI, TextDisplay.RunningAway)
+                        )
                 )
             ));
     }

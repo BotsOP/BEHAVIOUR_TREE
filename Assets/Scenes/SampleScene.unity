@@ -1100,6 +1100,7 @@ GameObject:
   - component: {fileID: 224223683}
   - component: {fileID: 224223681}
   - component: {fileID: 224223682}
+  - component: {fileID: 224223685}
   m_Layer: 0
   m_Name: Ally
   m_TagString: Untagged
@@ -1151,6 +1152,7 @@ MonoBehaviour:
   enemyTransform: {fileID: 5006512735735876005}
   grenade: {fileID: 7246040813553861032, guid: 720c8daa9221a1b4b97af156d776573d, type: 3}
   handTransform: {fileID: 1546028292}
+  allyUI: {fileID: 224223685}
 --- !u!95 &224223683
 Animator:
   serializedVersion: 3
@@ -1186,6 +1188,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &224223685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 224223680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4f9cd9c6e354f61baadfec0d8f0ece5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 285594543}
+  text: {fileID: 1330271741}
 --- !u!1 &232418119
 GameObject:
   m_ObjectHideFlags: 0

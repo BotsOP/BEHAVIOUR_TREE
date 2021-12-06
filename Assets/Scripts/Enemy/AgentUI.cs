@@ -7,10 +7,14 @@ public enum TextDisplay
     Patrolling,
     Noticing,
     Attack,
-    Happy
+    Happy,
+    Following,
+    RunningAway,
+    ThrowingGrenade,
+    Idle
 }
 
-public class EnemyUI : MonoBehaviour
+public class AgentUI : MonoBehaviour
 {
     public Slider slider;
     public TMP_Text text;
@@ -36,6 +40,18 @@ public class EnemyUI : MonoBehaviour
                 break;
             case TextDisplay.Happy:
                 text.text = ":)";
+                break;
+            case TextDisplay.Following:
+                text.text = ":)";
+                break;
+            case TextDisplay.RunningAway:
+                text.text = ":O";
+                break;
+            case TextDisplay.ThrowingGrenade:
+                text.text = ">:)";
+                break;
+            case TextDisplay.Idle:
+                text.text = ":|";
                 break;
         }
     }
