@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657856, g: 0.49641234, b: 0.57481724, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1148,7 +1148,7 @@ MonoBehaviour:
   visionAngle: 360
   walkSpeed: 2
   runSpeed: 5
-  maxGrenades: 3
+  maxGrenades: 0
   enemyTransform: {fileID: 5006512735735876005}
   grenade: {fileID: 7246040813553861032, guid: 720c8daa9221a1b4b97af156d776573d, type: 3}
   handTransform: {fileID: 1546028292}
@@ -12157,7 +12157,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1981511029}
   m_LocalRotation: {x: -0, y: -0.9960365, z: -0, w: 0.08894516}
-  m_LocalPosition: {x: -0.78, y: 1, z: 4.18}
+  m_LocalPosition: {x: -7.67, y: 1, z: -2.11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 963194228}
@@ -21204,7 +21204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyUI: {fileID: 627896694}
-  radius1: 10
+  radius1: 2
   angle1: 360
   radius2: 10
   angle2: 90

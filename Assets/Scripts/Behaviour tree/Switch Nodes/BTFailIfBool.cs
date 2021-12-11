@@ -16,6 +16,10 @@ namespace Behaviour_tree.Switch_Nodes
         public override TaskStatus Run()
         {
             boolean = blackBoard.GetValue<bool>(boolName);
+            if (boolName == "enemySeesUs")
+            {
+                Debug.Log(boolean);
+            }
             if (boolean)
             {
                 return TaskStatus.Success;

@@ -51,7 +51,11 @@ public class Ally : MonoBehaviour
         float grenadeScale = 1;
 
         tree = new BTSwitchNode(
-            new BTFailIfBool(blackBoard, "enemySeesUs"),
+            new BTSelector(
+                new BTCheckBool(blackBoard, "isThrowing"), 
+                new BTCheckBool(blackBoard, "enemySeesUs")
+            ),
+            
             new BTSequence(
                 new BTSwitchNode(
                     new BTInvert(new BTCheckDistance(tooCloseToPlayer, player, transform)),
@@ -88,8 +92,9 @@ public class Ally : MonoBehaviour
                     new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
                     new BTChangeSpeed(agent, runSpeed, 0.5f)
                 ),
+                
                 new BTSwitchNode(
-                    new BTMimicIfSucceeds(
+                    new BTSequence(
                         new BTInvert(new BTCheckBool(blackBoard, "isThrowing")), 
                         new BTLook(gameObject, enemyMask, obstructionMask, visionRadius, visionAngle, blackBoard, "enemy")
                         ),
@@ -101,7 +106,8 @@ public class Ally : MonoBehaviour
                             new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
                             new BTChangeSpeed(agent, runSpeed, 0.5f)
                         ),
-
+            
+                        //check if your against wall
                         new BTSwitchNode(new BTIsAgainstWall(blackBoard, 1f, transform),
                             new BTSetBool(blackBoard, "isThrowing", false),
                             new BTDebug("against wall")
@@ -111,13 +117,15 @@ public class Ally : MonoBehaviour
                             new BTSequence(
                                 new BTMoreThen(blackBoard, "amountGrenades", maxGrenades)
                             ),
-
+                                
+                                //sit idle against wall
                             new BTSequence(
                                 new BTDebug("behind cover dont see enemy and no grenades"),
                                 new BTChangeText(allyUI, TextDisplay.RunningAway),
                                 new BTAnimate(anim, 0.1f, new AnimatePackage(1, "cover"))
                                 ),
-
+                            
+                                //throw grenade
                             new BTParallelComplete(
                                 new BTSequence(
                                     new BTDebug("behind cover dont see enemy and grenade"),

@@ -24,5 +24,6 @@ public class BTWait : BTBaseNode
     }
     public override void OnExit()
     {
+        
     }
 }

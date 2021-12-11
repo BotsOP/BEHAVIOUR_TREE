@@ -31,12 +31,12 @@ public class BTSequence : BTBaseNode
                 case TaskStatus.Success: 
                     startNode = true;
                     continue;
-                case TaskStatus.Running: return TaskStatus.Running;
+                case TaskStatus.Running: 
+                    return TaskStatus.Running;
             }
         }
         currentIndex = 0;
         return TaskStatus.Success;
-
     }
     public override void OnEnter()
     {
