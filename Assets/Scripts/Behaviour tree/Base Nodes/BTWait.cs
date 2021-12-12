@@ -21,7 +21,7 @@ public class BTWait : BTBaseNode
     public override void OnEnter()
     {
         starTime = Time.time;
-    }
+    } 
     public override void OnExit()
     {
         

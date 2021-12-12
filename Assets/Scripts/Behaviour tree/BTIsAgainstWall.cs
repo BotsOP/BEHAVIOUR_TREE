@@ -21,7 +21,7 @@ namespace DefaultNamespace.Behaviour_tree
             for (int i = 0; i < 4; i++)
             {
                 int secondVert = (i + 1) % 4;
-                if (HandleUtility.DistancePointLine(transform.position, coverScript.worldVerts[i], coverScript.worldVerts[secondVert]) < distanceToWall)
+                if (DistancePointLine(transform.position, coverScript.worldVerts[i], coverScript.worldVerts[secondVert]) < distanceToWall)
                 {
                     return TaskStatus.Success;
                 }
@@ -33,6 +33,28 @@ namespace DefaultNamespace.Behaviour_tree
         }
         public override void OnExit()
         {
+        }
+        
+        //code from HandleUtility
+        public static Vector3 ProjectPointLine(Vector3 point, Vector3 lineStart, Vector3 lineEnd)
+        {
+            Vector3 relativePoint = point - lineStart;
+            Vector3 lineDirection = lineEnd - lineStart;
+            float length = lineDirection.magnitude;
+            Vector3 normalizedLineDirection = lineDirection;
+            if (length > .000001f)
+                normalizedLineDirection /= length;
+
+            float dot = Vector3.Dot(normalizedLineDirection, relativePoint);
+            dot = Mathf.Clamp(dot, 0.0F, length);
+
+            return lineStart + normalizedLineDirection * dot;
+        }
+
+        // Calculate distance between a point and a line.
+        public static float DistancePointLine(Vector3 point, Vector3 lineStart, Vector3 lineEnd)
+        {
+            return Vector3.Magnitude(ProjectPointLine(point, lineStart, lineEnd) - point);
         }
     }
 }

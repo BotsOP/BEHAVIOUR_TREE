@@ -16,7 +16,7 @@ namespace Behaviour_tree.Base_Nodes
         public override TaskStatus Run()
         {
             float amountGrenades = blackBoard.GetValue<float>(valueName);
-            amountGrenades++;
+            amountGrenades++; 
             blackBoard.SetValue(valueName, amountGrenades);
             //Debug.Log(amountGrenades);
             return TaskStatus.Success;

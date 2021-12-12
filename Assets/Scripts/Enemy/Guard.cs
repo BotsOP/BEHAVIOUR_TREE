@@ -166,11 +166,6 @@ public class Guard : MonoBehaviour
              )
          );
     }
-    
-    private Vector3 RandomPos()
-    {
-        return new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5));
-    }
 
     void FixedUpdate()
     {

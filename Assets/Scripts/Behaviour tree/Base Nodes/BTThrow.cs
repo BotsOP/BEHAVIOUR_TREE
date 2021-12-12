@@ -36,7 +36,7 @@ namespace Behaviour_tree.Base_Nodes
             if (valueName != null)
             {
                 objectToThrow = blackBoard.GetValue<GameObject>(valueName).GetComponent<Rigidbody>();
-            }
+             }
         }
         public override void OnExit()
         {
