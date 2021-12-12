@@ -118,19 +118,24 @@ public class Guard : MonoBehaviour
                  new BTSequence(patrolNodes)),
             
              new BTSequence(
-                 //if see weapon pick it up
                  new BTInvert(new BTSequence(
+                     // check if already has a weapon
                      new BTInvert(new BTFailIfBool(blackBoard, "hasWeapon")),
+                     // check to see if he sees weapon
                      new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
-                     new BTDebug("see weapon"),
+                     // I see a weapon and start doing the pick weapon up behaviour
                      new BTRaiseEvent(EventType.PLAYER_ESCAPED),
                      new BTChangeText(enemyUI, TextDisplay.Happy),
+                     
                      new BTParallelComplete(
                          new BTAnimate(anim, 0.5f, new AnimatePackage(animWalkFloat, "moveY")),
                          new BTChangeSpeed(agent, walkSpeed, 0.5f)
                      ),
+                     
+                     // walk to weapon
                      new BTMoveTo(agent, blackBoard, "weapon"),
                      new BTCheckDistanceAgent(agent, 0.5f),
+                     // standing infront of weapon
                      new BTMove(agent, transform),
                      new BTAnimate(anim, 0.1f, new AnimatePackage(1, "weaponPickUp")),
                      new BTWait(1.2f),
