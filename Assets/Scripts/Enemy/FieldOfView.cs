@@ -79,8 +79,11 @@ public class FieldOfView
         Collider[] rangeChecks = Physics.OverlapSphere(gameObject.transform.position, radius, targetMask);
 
         //If there are multiple targets change this into a foreach loop
-        if (rangeChecks.Length != 0)
+        if (rangeChecks.Length > 0)
         {
+            if(rangeChecks.Length > 1)
+                Debug.Log(rangeChecks.Length);
+            
             target = rangeChecks[0].transform;
             Vector3 directionToTarget = (target.position - gameObject.transform.position).normalized;
 

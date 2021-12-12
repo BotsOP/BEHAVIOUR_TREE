@@ -21,6 +21,7 @@ public class BTLookNoticeThreshhold : BTBaseNode
     {
         TaskStatus result = lookNode.Run();
         float currentNotice = blackBoard.GetValue<float>("currentNotice");
+        //Debug.Log(result);
         if (result == TaskStatus.Success)
         {
             float currentNoticeValue = currentNotice + noticeTargetIncrease;

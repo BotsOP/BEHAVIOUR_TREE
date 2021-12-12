@@ -61,7 +61,6 @@ public class Ally : MonoBehaviour
                     new BTInvert(new BTCheckDistance(tooCloseToPlayer, player, transform)),
 
                     new BTSequence(
-                        new BTDebug("idle"),
                         new BTChangeText(allyUI, TextDisplay.Idle),
                         new BTMove(agent, transform),
                         new BTParallelComplete(
@@ -74,7 +73,6 @@ public class Ally : MonoBehaviour
                     ),
 
                     new BTSequence(
-                        new BTDebug("walking to player"),
                         new BTMove(agent, player),
                         new BTChangeText(allyUI, TextDisplay.Following),
                         new BTParallelComplete(
@@ -87,7 +85,6 @@ public class Ally : MonoBehaviour
                 )),
 
             new BTSequence(
-                new BTDebug("enemy sees us"),
                 new BTParallelComplete(
                     new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
                     new BTChangeSpeed(agent, runSpeed, 0.5f)
@@ -100,7 +97,6 @@ public class Ally : MonoBehaviour
                         ),
 
         new BTSequence(
-            new BTDebug("dont see enemy"),
                         new BTCheckDistanceAgent(agent, 0.1f),
                         new BTParallelComplete(
                             new BTAnimate(anim, 0.5f, new AnimatePackage(2, "moveY")),
@@ -120,7 +116,6 @@ public class Ally : MonoBehaviour
                                 
                                 //sit idle against wall
                             new BTSequence(
-                                new BTDebug("behind cover dont see enemy and no grenades"),
                                 new BTChangeText(allyUI, TextDisplay.RunningAway),
                                 new BTAnimate(anim, 0.1f, new AnimatePackage(1, "cover"))
                                 ),
@@ -128,7 +123,6 @@ public class Ally : MonoBehaviour
                                 //throw grenade
                             new BTParallelComplete(
                                 new BTSequence(
-                                    new BTDebug("behind cover dont see enemy and grenade"),
                                 new BTSetBool(blackBoard, "isThrowing", true),
                                 new BTChangeText(allyUI, TextDisplay.ThrowingGrenade),
                                 new BTLookAt(transform, player, 0.5f),
@@ -155,7 +149,6 @@ public class Ally : MonoBehaviour
                     ),
 
                     new BTSequence(
-                        new BTDebug("see enemy and looking for cover"),
 
                         new BTSwitchNode(
                     new BTLook(gameObject, obstructionMask, visionRadius, visionAngle, blackBoard, "cover", true),
@@ -170,7 +163,6 @@ public class Ally : MonoBehaviour
                     ),
                     
                     new BTSequence(
-                        new BTDebug("see enemy and walking toward cover"),
                         new BTGoBehindCover(agent, transform, blackBoard, "enemy", "cover"),
                         //new BTIsAgainstWall(blackBoard, 0.5f, transform),
                         

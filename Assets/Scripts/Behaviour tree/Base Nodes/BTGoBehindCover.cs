@@ -27,8 +27,7 @@ namespace Behaviour_tree.Base_Nodes
             {
                 return TaskStatus.Failed;
             }
-
-                float closestDist = Mathf.Infinity;
+            float closestDist = Mathf.Infinity;
                 Transform targetCover = null;
                 foreach (var cover in coverList)
                 {

@@ -23,7 +23,7 @@ public class Guard : MonoBehaviour
     public float noticeBuffer = 500;
 
     [Header("Patrol")] 
-    public Transform[] patrolPoints;
+    public Transform patrolPoint;
     public GameObject head;
     public float walkSpeed;
     public float runSpeed;
@@ -56,6 +56,12 @@ public class Guard : MonoBehaviour
         blackBoard.SetValue("noticeThreshhold", noticeTargetThreshold);
         blackBoard.SetValue("currentNotice", 0f);
         blackBoard.SetValue("hasWeapon", false);
+
+        Transform[] patrolPoints = new Transform[patrolPoint.childCount];
+        for (int i = 0; i < patrolPoint.childCount; i++)
+        {
+            patrolPoints[i] = patrolPoint.GetChild(i);
+        }
         
         BTBaseNode enemyLookNode = new BTSelector(
             
@@ -116,6 +122,7 @@ public class Guard : MonoBehaviour
                  new BTInvert(new BTSequence(
                      new BTInvert(new BTFailIfBool(blackBoard, "hasWeapon")),
                      new BTLook(head, weaponMask, obstructionMask, radius2, angle1, blackBoard, "weapon"),
+                     new BTDebug("see weapon"),
                      new BTRaiseEvent(EventType.PLAYER_ESCAPED),
                      new BTChangeText(enemyUI, TextDisplay.Happy),
                      new BTParallelComplete(
@@ -134,6 +141,7 @@ public class Guard : MonoBehaviour
                  )),
                  
                  enemyLookNode,
+                 new BTDebug("see player"),
                  new BTChangeText(enemyUI, TextDisplay.Attack),
                  new BTMoveTo(agent, blackBoard, "target"),
                  new BTParallelComplete(
@@ -145,12 +153,11 @@ public class Guard : MonoBehaviour
                  //if enemy is in range attack
                  new BTSequence(
                      new BTRunningToFailed(new BTCheckDistanceAgent(agent, 3)),
+                     new BTDebug("player is in range"),
                      new BTAnimate(anim, 0.1f, new AnimatePackage(1, "isAttacking")),
                      new BTAnimate(anim, 0.1f, new AnimatePackage(0, "isAttacking")),
                      new BTResetAnim(anim, new AnimatePackage(0, "isAttacking"))
-                 ),
-
-                 new BTInvert(new BTRunningToFailed(new BTCheckDistanceAgent(agent, 30)))
+                 )
              )
          );
     }

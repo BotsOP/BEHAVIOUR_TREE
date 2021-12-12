@@ -37,11 +37,6 @@ public class BTLook : BTBaseNode
     {
         fov.Update();
 
-        if (valueName == "target")
-        {
-            Debug.Log(fov.canSeeTarget);
-        }
-        
         if (fov.canSeeTarget)
         {
             if (returnList)
